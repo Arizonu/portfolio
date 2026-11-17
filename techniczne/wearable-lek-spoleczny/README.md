@@ -17,4 +17,4 @@ Projekt zespołowy na przedmiot AI & Data Science 1 (PJATK). Koncepcja „inteli
 Prywatność danych fizjologicznych, fałszywe odczyty (np. pot z upału wygląda jak stres), ryzyko stygmatyzacji przy widocznym sygnale.
 
 ## Pliki
-<!-- TODO: link do symulacji Wokwi, prezentacja.pdf, sketch.ino -->
+Symulacja w Wokwi i prezentacja: wkrótce.
