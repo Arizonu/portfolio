@@ -7,7 +7,7 @@ Tutaj zbieram projekty ze studiów i własne: technologię ubieralną, UX i bada
 
 | Projekt | Obszar | Narzędzia |
 |---|---|---|
-| [Wearable na lęk społeczny](techniczne/wearable-lek-spoleczny/) | psychofizjologia, prototypowanie | Arduino, Wokwi, C++ |
+| [Mankiet komfortu – wearable na lęk społeczny](techniczne/wearable-lek-spoleczny/) ([symulacja](https://wokwi.com/projects/479156999615256577)) | psychofizjologia, biofeedback EDA, prototypowanie | Arduino, Wokwi, C++ |
 | [Mapa kibiców Krakowa](techniczne/mapa-kibicow-krakowa/) ([na żywo](https://arizonu.github.io/portfolio/techniczne/mapa-kibicow-krakowa/)) | wizualizacja danych, web | HTML, CSS, SVG, JavaScript |
 | [Persony rodziców – kontrola rodzicielska](ux-i-badania/persony-rodzicow/) | UX research, persony | analiza raportu, Canva |
 | [Cyfrowe dziedzictwo](prezentacje/cyfrowe-dziedzictwo/) | prezentacja, wystąpienie | projekt slajdów |
