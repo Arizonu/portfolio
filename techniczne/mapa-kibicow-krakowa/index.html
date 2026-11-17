@@ -1,0 +1,239 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Kibicowski Kraków</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: matchday programme — headline, schematic city map as the pitch, tap-to-read panel, then a "programme notes" list of facts */
+:root{
+  --bg:#f3f4f2; --paper:#ffffff; --ink:#15191d; --muted:#5b636b; --line:#d5d9dc;
+  --wisla:#1d3f8f; --wisla-ink:#ffffff; --cracovia:#c8102e; --stripe:#ffffff;
+  --mixed:#a9b0b5; --river:#7fb3d9; --land:#e7eae6; --pin:#15191d;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101316; --paper:#181c20; --ink:#ecefF1; --muted:#9aa3ab; --line:#2c3237;
+  --wisla:#4f74d1; --cracovia:#e0344c; --stripe:#f2f2f2; --mixed:#5d666d;
+  --river:#2f6d99; --land:#22272b; --pin:#ecefF1; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101316; --paper:#181c20; --ink:#ecefF1; --muted:#9aa3ab; --line:#2c3237;
+  --wisla:#4f74d1; --cracovia:#e0344c; --stripe:#f2f2f2; --mixed:#5d666d;
+  --river:#2f6d99; --land:#22272b; --pin:#ecefF1; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px;display:grid;gap:22px}
+header{display:grid;gap:6px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(40px,9vw,76px);line-height:.92;margin:0;text-transform:uppercase;text-wrap:balance}
+h1 .w{color:var(--wisla)} h1 .c{color:var(--cracovia)}
+.lede{max-width:62ch;color:var(--muted);margin:0}
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.filters button{font:600 13px var(--body);border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:7px 14px;cursor:pointer}
+.filters button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.filters button:focus-visible,.d:focus-visible,.pin:focus-visible{outline:3px solid var(--wisla);outline-offset:2px}
+.board{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:760px){.board{grid-template-columns:1fr}}
+.mapbox{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:10px;min-width:0}
+svg{display:block;width:100%;height:auto}
+.d{stroke:var(--paper);stroke-width:3;cursor:pointer;transition:opacity .2s}
+.d.dim{opacity:.18}
+.d.sel{stroke:var(--ink);stroke-width:4}
+.lbl{font:600 15px var(--body);fill:var(--ink);paint-order:stroke;stroke:var(--paper);stroke-width:4px;pointer-events:none}
+.lbl.inv{fill:var(--wisla-ink);stroke:none}
+.pin{cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);padding:8px 4px 2px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:16px;height:12px;border-radius:2px;display:inline-block}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px 18px;display:grid;gap:8px;min-width:0}
+.panel h2{font-family:var(--display);font-weight:800;font-size:32px;line-height:1;margin:0;text-transform:uppercase}
+.tag{font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:3px;justify-self:start}
+.tag.wisla{background:var(--wisla);color:#fff}
+.tag.cracovia{background:repeating-linear-gradient(90deg,var(--cracovia) 0 8px,var(--stripe) 8px 16px);color:#15191d;text-shadow:0 0 3px #fff,0 0 3px #fff}
+.tag.mixed{background:var(--mixed);color:#15191d}
+.tag.stad{background:var(--ink);color:var(--bg)}
+.panel p{margin:0}
+.hint{color:var(--muted);font-size:13px}
+dl.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:4px 0 0;font-size:14px}
+dl.kv dt{color:var(--muted)} dl.kv dd{margin:0;font-variant-numeric:tabular-nums}
+section.facts h2{font-family:var(--display);font-weight:800;font-size:34px;text-transform:uppercase;margin:0 0 10px}
+ol.facts{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+ol.facts li{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:grid;gap:4px;align-content:start}
+ol.facts .yr{font-family:var(--display);font-weight:800;font-size:28px;line-height:1}
+ol.facts .yr.w{color:var(--wisla)} ol.facts .yr.c{color:var(--cracovia)}
+.note{font-size:13px;color:var(--muted);max-width:70ch;margin:0}
+@media (prefers-reduced-motion:reduce){.d{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Święta Wojna · mapa schematyczna</div>
+    <h1><span class="w">Wisła</span> czy <span class="c">Pasy</span>?</h1>
+    <p class="lede">Która część Krakowa za kim stoi. Stuknij dzielnicę albo pinezkę stadionu, żeby zobaczyć szczegóły.</p>
+  </header>
+
+  <div class="filters" role="group" aria-label="Warstwa mapy">
+    <button id="m-fans" data-m="fans" aria-pressed="true">⚽ Kibice</button>
+    <button id="m-price" data-m="price" aria-pressed="false">🏠 Cena za m²</button>
+  </div>
+  <div class="filters" id="fanFilters" role="group" aria-label="Pokaż">
+    <button id="f-all" data-f="all" aria-pressed="true">Wszystko</button>
+    <button id="f-w" data-f="wisla" aria-pressed="false">Wisła</button>
+    <button id="f-c" data-f="cracovia" aria-pressed="false">Cracovia</button>
+    <button id="f-m" data-f="mixed" aria-pressed="false">Mieszane</button>
+  </div>
+
+  <div class="board">
+    <div class="mapbox">
+      <svg viewBox="0 0 1000 610" role="img" aria-label="Schematyczna mapa dzielnic Krakowa z podziałem kibicowskim">
+        <defs>
+          <pattern id="pasy" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(90)">
+            <rect width="18" height="18" style="fill:var(--stripe)"/>
+            <rect width="9" height="18" style="fill:var(--cracovia)"/>
+          </pattern>
+          <pattern id="gwiazdy" width="44" height="44" patternUnits="userSpaceOnUse">
+            <rect width="44" height="44" style="fill:var(--wisla)"/>
+            <polygon points="22,13 24.6,19.4 31.5,19.9 26.2,24.3 27.9,31 22,27.3 16.1,31 17.8,24.3 12.5,19.9 19.4,19.4" style="fill:#ffffff;opacity:.28"/>
+          </pattern>
+          <pattern id="mix" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <rect width="12" height="12" style="fill:var(--mixed)"/>
+            <rect width="3" height="12" style="fill:var(--land);opacity:.6"/>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="1000" height="610" style="fill:var(--land)"/>
+        <g id="districts"></g>
+        <path d="M0,370 C80,382 150,392 300,380 S400,360 440,402 S520,360 545,340 S640,332 665,342 S740,420 780,432 S900,462 1000,430" style="fill:none;stroke:var(--river);stroke-width:12;stroke-linecap:round"/>
+        <text x="215" y="402" style="font:italic 500 14px var(--body);fill:var(--river)">Wisła (rzeka)</text>
+        <g id="labels"></g>
+        <!-- Błonia -->
+        <ellipse cx="335" cy="308" rx="26" ry="14" style="fill:#6aa56a;opacity:.55"/>
+        <text x="300" y="296" style="font:500 12px var(--mono);fill:var(--ink);paint-order:stroke;stroke:var(--paper);stroke-width:3px">Błonia</text>
+        <!-- Wawel -->
+        <circle cx="432" cy="378" r="5" style="fill:var(--ink)"/>
+        <text x="441" y="374" style="font:500 12px var(--mono);fill:var(--ink);paint-order:stroke;stroke:var(--paper);stroke-width:3px">Wawel</text>
+        <g id="pins"></g>
+      </svg>
+      <div class="legend" id="priceLegend" hidden>
+        <span>13,4 tys. zł</span><i class="sw" style="width:140px;background:linear-gradient(90deg,#fbe3c4,#e8925a,#9c2f12)"></i><span>20,9 tys. zł / m²</span>
+        <span style="flex-basis:100%">Średnie ceny ofertowe (rynek pierwotny i wtórny), I kw. 2026</span>
+      </div>
+      <div class="legend" id="fanLegend">
+        <span><i class="sw" style="background:var(--wisla)"></i>przewaga Wisły</span>
+        <span><i class="sw" style="background:repeating-linear-gradient(90deg,var(--cracovia) 0 4px,var(--stripe) 4px 8px);outline:1px solid var(--line)"></i>przewaga Cracovii</span>
+        <span><i class="sw" style="background:var(--mixed)"></i>teren mieszany</span>
+        <span>⚑ stadion</span>
+      </div>
+    </div>
+
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </div>
+
+  <section class="facts">
+    <h2>Ciekawostki</h2>
+    <ol class="facts">
+      <li><span class="yr">1906</span><p>Oba kluby powstały w tym samym roku i od początku dzieliły miasto. To jedna z najstarszych rywalizacji derbowych na świecie.</p></li>
+      <li><span class="yr">1908</span><p>Pierwsze udokumentowane derby rozegrano 20 września 1908 r. Skończyło się remisem 1:1.</p></li>
+      <li><span class="yr c">1913</span><p>8 maja Cracovia pokonała Wisłę 2:1 w pierwszym meczu polskich drużyn o mistrzostwo uznanym przez FIFA.</p></li>
+      <li><span class="yr">Skąd „Święta Wojna”?</span><p>Nazwa pochodzi od derbów żydowskich klubów Makkabi i Jutrzenka. Przeniósł ją na Wisłę i Cracovię Ludwik Gintel, obrońca Jutrzenki, który potem grał w Pasach. Dziś śpiewają ją obie strony.</p></li>
+      <li><span class="yr c">1948</span><p>Po sezonie obie drużyny miały tyle samo punktów i o tytule zdecydował dodatkowy mecz. Cracovia wygrała 3:1 i została mistrzem Polski.</p></li>
+      <li><span class="yr">~1 km</span><p>Tyle mniej więcej dzieli oba stadiony. Między nimi leżą Błonia, więc w dniu derbów policja ma do pilnowania właściwie jeden kwartał miasta.</p></li>
+      <li><span class="yr w">45 000</span><p>Rekord frekwencji przy Reymonta: Wisła – Celtic Glasgow 2:0 w Pucharze UEFA, 29 września 1976 r.</p></li>
+      <li><span class="yr c">Papież w pasach</span><p>Karol Wojtyła uchodził za sympatyka Cracovii i był honorowym członkiem klubu.</p></li>
+      <li><span class="yr w">2026</span><p>Wisła wróciła do Ekstraklasy po czterech sezonach w I lidze. Awans przypieczętowała w maju, a feta przeniosła się na Rynek.</p></li>
+      <li><span class="yr">3 kluby</span><p>W sezonie 2026/27 w Ekstraklasie grają Wisła, Cracovia i beniaminek Wieczysta. Ostatni raz trzy krakowskie drużyny były w elicie w 1953 r. Wieczysta rozgrywa mecze domowe przy Reymonta.</p></li>
+      <li><span class="yr w">Poza miastem</span><p>Kmita Zabierzów zaczynał jako Wisła Zabierzów, lokalna filia Białej Gwiazdy. Na mecze Garbarni czy Puszczy też chodzą kibice Wisły.</p></li>
+    </ol>
+  </section>
+
+  <p class="note">Mapa jest schematyczna, a podział kibicowski przybliżony. Opiera się na potocznej wiedzy i „mapach graffiti”, nie na żadnych badaniach. Granice zmieniają się z osiedla na osiedle, a w każdej dzielnicy znajdziesz fanów obu klubów. Ceny za m² to średnie ceny ofertowe za I kwartał 2026 według OnGeo.pl. Zarobki to średnie wynagrodzenie brutto w sektorze przedsiębiorstw w Krakowie za maj 2026 według Urzędu Statystycznego. Danych dla pojedynczych dzielnic nikt nie publikuje.</p>
+</div>
+
+<script>
+const D=[
+ {id:"zwierzyniec",n:"Zwierzyniec",s:"mixed",p:"20,250 180,220 330,240 360,300 380,355 300,368 150,378 20,360",l:[150,300],t:"Tu stoją oba stadiony, rozdzielone Błoniami. Salwator i Wola Justowska to teren sporny, a w dni meczowe granica przebiega dosłownie przez park."},
+ {id:"bronowice",n:"Bronowice",s:"wisla",p:"150,110 310,90 330,240 180,220 140,170",l:[200,170],t:"Zachodnie osiedla od lat kojarzone z Białą Gwiazdą. Blisko do Reymonta, więc kibicowska tradycja jest tu silna."},
+ {id:"pradnik-bialy",n:"Prądnik Biały",s:"wisla",p:"250,20 450,10 470,110 400,100 310,90 260,60",l:[330,60],t:"Azory i Krowodrza Górka to klasyczne bastiony Wisły. Graffiti z gwiazdą widać tu na wielu blokach."},
+ {id:"krowodrza",n:"Krowodrza",s:"wisla",p:"310,90 400,100 470,110 455,250 420,290 360,300 330,240",l:[370,175],t:"Matecznik Wisły. Przy ul. Reymonta stoi jej stadion, a Czarna Wieś i Łobzów są mocno „biało-czerwono-niebieskie”."},
+ {id:"stare-miasto",n:"Stare Miasto",s:"mixed",p:"360,300 420,290 455,250 520,270 540,330 480,380 440,395 380,355",l:[440,322],t:"Ścisłe centrum jest neutralne, tu świętuje się awanse i tytuły. Kazimierz, historycznie związany z Cracovią, przechyla część dzielnicy w stronę Pasów."},
+ {id:"pradnik-czerwony",n:"Prądnik Czerwony",s:"wisla",p:"450,10 600,20 620,140 560,180 520,180 455,250 470,110",l:[515,90],t:"Północne bloki, w większości po stronie Wisły, choć zdarzają się wyspy Cracovii."},
+ {id:"grzegorzki",n:"Grzegórzki",s:"cracovia",p:"455,250 520,180 560,180 600,250 580,330 540,330 520,270",l:[540,262],t:"Wyjątek po północnej stronie rzeki. Grzegórzki i Dąbie są uważane za teren Cracovii."},
+ {id:"czyzyny",n:"Czyżyny",s:"mixed",p:"560,180 620,140 730,150 740,290 660,330 580,330 600,250",l:[665,240],t:"Strefa przejściowa między centrum a Nową Hutą, z wpływami obu klubów."},
+ {id:"mistrzejowice",n:"Mistrzejowice",s:"wisla",p:"600,20 760,30 760,140 730,150 620,140",l:[680,85],t:"Wielkie osiedla na północnym wschodzie, mocno za Wisłą."},
+ {id:"bienczyce",n:"Bieńczyce",s:"wisla",p:"730,150 760,140 860,150 850,260 740,290",l:[795,215],t:"Nowohuckie osiedla z przewagą Białej Gwiazdy."},
+ {id:"wzgorza",n:"Wzgórza Krzesławickie",s:"wisla",p:"760,30 900,40 960,120 860,150 760,140",l:[820,95],t:"Spokojniejsze, podmiejskie rejony, ale kibicowsko raczej po stronie Wisły."},
+ {id:"nowa-huta",n:"Nowa Huta",s:"wisla",p:"740,290 850,260 860,150 960,120 1000,200 990,420 880,450 760,420 660,330",l:[870,330],t:"Przeważa Wisła, choć Nowa Huta ma też własną lokalną dumę: Hutnika. Jego stadion stoi przy ul. Ptaszyckiego."},
+ {id:"debniki",n:"Dębniki",s:"mixed",p:"20,378 150,398 300,388 380,372 400,440 360,560 200,590 40,520",l:[170,480],t:"Duża i zróżnicowana dzielnica: Ruczaj, Kliny, Pychowice. Wpływy obu klubów mieszają się tu bardziej niż gdzie indziej."},
+ {id:"podgorze",n:"Podgórze",s:"cracovia",p:"380,372 440,414 490,402 545,352 660,352 700,397 600,440 480,450 400,440",l:[540,410],t:"Serce Pasów za rzeką. Zabłocie i Płaszów są kojarzone z Cracovią."},
+ {id:"lagiewniki",n:"Łagiewniki-Borek Fałęcki",s:"mixed",p:"400,440 480,450 470,540 400,590 360,560",l:[372,510],t:"Okolice sanktuarium i Borku. Sporny pas między Dębnikami a Podgórzem, z lekką przewagą Pasów."},
+ {id:"swoszowice",n:"Swoszowice",s:"cracovia",p:"360,560 400,590 470,540 560,560 720,560 740,600 200,600 200,590",l:[560,588],t:"Południowe obrzeża miasta, raczej po stronie Cracovii."},
+ {id:"duchackie",n:"Podgórze Duchackie",s:"cracovia",p:"480,450 600,440 620,530 560,560 470,540",l:[490,500],t:"Kurdwanów i Wola Duchacka to mocny teren Cracovii."},
+ {id:"biezanow",n:"Bieżanów-Prokocim",s:"cracovia",p:"600,440 700,397 780,440 820,520 720,560 620,530",l:[640,490],t:"Południowy wschód, w przewadze za Pasami."}
+];
+const STAD=[
+ {id:"s-wisla",n:"Stadion Wisły",x:395,y:268,c:"var(--wisla)",club:"Wisła Kraków",kv:[["Nazwa","Synerise Arena Kraków im. Henryka Reymana"],["Adres","ul. Reymonta 22"],["Pojemność","ok. 33 tys."],["Rekord","45 000 (1976, Celtic)"],["Liga","Ekstraklasa, beniaminek 2026/27"]],t:"W sezonie 2026/27 gra tu też Wieczysta, więc przy Reymonta piłka jest niemal co tydzień."},
+ {id:"s-cracovia",n:"Stadion Cracovii",x:352,y:338,c:"var(--cracovia)",club:"Cracovia",kv:[["Nazwa","Stadion im. Józefa Piłsudskiego"],["Adres","ul. Józefa Kałuży 1"],["Pojemność","ok. 15 tys."],["Liga","Ekstraklasa"]],t:"Ulica nosi imię Józefa Kałuży, legendy Cracovii i przedwojennego reprezentanta Polski."},
+ {id:"s-hutnik",n:"Stadion Hutnika",x:800,y:318,c:"var(--muted)",club:"Hutnik Nowa Huta",kv:[["Adres","ul. Ptaszyckiego 4"],["Dzielnica","Nowa Huta"]],t:"Bonus: trzecia krakowska tradycja piłkarska, z własnym, mocno lokalnym środowiskiem kibiców."}
+];
+const PRICE={"stare-miasto":20889,"grzegorzki":20151,"zwierzyniec":19690,"krowodrza":18116,"podgorze":17245,"bronowice":17089,"pradnik-czerwony":16594,"lagiewniki":15597,"czyzyny":15531,"duchackie":15501,"pradnik-bialy":15466,"debniki":15396,"mistrzejowice":14641,"biezanow":13929,"bienczyce":13830,"nowa-huta":13618,"wzgorza":13520,"swoszowice":13434};
+const RANK=Object.keys(PRICE).sort((a,b)=>PRICE[b]-PRICE[a]);
+const PMIN=13434,PMAX=20889;
+function priceColor(v){const t=(v-PMIN)/(PMAX-PMIN);
+  const stops=[[251,227,196],[232,146,90],[156,47,18]];
+  const [a,b,u]=t<.5?[stops[0],stops[1],t*2]:[stops[1],stops[2],(t-.5)*2];
+  return `rgb(${a.map((x,i)=>Math.round(x+(b[i]-x)*u)).join(",")})`}
+const fmt=v=>v.toLocaleString("pl-PL")+" zł";
+let mode="fans";
+const fill={wisla:"url(#gwiazdy)",cracovia:"url(#pasy)",mixed:"url(#mix)"};
+const tagTxt={wisla:"Przewaga Wisły",cracovia:"Przewaga Cracovii",mixed:"Teren mieszany"};
+const NS="http://www.w3.org/2000/svg";
+const gD=document.getElementById("districts"),gL=document.getElementById("labels"),gP=document.getElementById("pins"),panel=document.getElementById("panel");
+D.forEach(d=>{
+  const p=document.createElementNS(NS,"polygon");
+  p.setAttribute("points",d.p);p.setAttribute("class","d");p.setAttribute("fill",fill[d.s]);
+  p.setAttribute("tabindex","0");p.setAttribute("role","button");p.setAttribute("aria-label",d.n+": "+tagTxt[d.s]);
+  p.dataset.id=d.id;p.dataset.s=d.s;
+  p.addEventListener("click",()=>showD(d));
+  p.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();showD(d)}});
+  gD.appendChild(p);d.el=p;
+  const t=document.createElementNS(NS,"text");
+  t.setAttribute("x",d.l[0]);t.setAttribute("y",d.l[1]);t.setAttribute("class","lbl");
+  t.textContent=d.n.length>14?d.n.split(/[- ]/)[0]:d.n;gL.appendChild(t);
+});
+STAD.forEach(s=>{
+  const g=document.createElementNS(NS,"g");g.setAttribute("class","pin");g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label",s.n);
+  g.innerHTML=`<line x1="${s.x}" y1="${s.y}" x2="${s.x}" y2="${s.y-34}" style="stroke:var(--pin);stroke-width:3"/>
+  <path d="M${s.x},${s.y-34} l26,8 l-26,8 z" style="fill:${s.c};stroke:var(--paper);stroke-width:1.5"/>
+  <circle cx="${s.x}" cy="${s.y}" r="7" style="fill:${s.c};stroke:var(--paper);stroke-width:3"/>`;
+  g.addEventListener("click",()=>showS(s));
+  g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();showS(s)}});
+  gP.appendChild(g);
+});
+function clearSel(){D.forEach(d=>d.el.classList.remove("sel"))}
+function showD(d){clearSel();d.el.classList.add("sel");
+  const pr=PRICE[d.id],rk=RANK.indexOf(d.id)+1;
+  panel.innerHTML=`<span class="tag ${d.s}">${tagTxt[d.s]}</span><h2>${d.n}</h2>
+  <dl class="kv"><dt>Cena za m²</dt><dd><b>${fmt(pr)}</b> · ${rk}. miejsce z 18</dd>
+  <dt>Wobec najtańszej</dt><dd>${pr===PMIN?"najtańsza dzielnica":"+"+Math.round((pr/PMIN-1)*100)+"% drożej niż Swoszowice"}</dd>
+  <dt>Zarobki</dt><dd>średnio w Krakowie ${fmt(11469)} brutto (maj 2026)*</dd></dl>
+  <p>${d.t}</p><p class="hint">* Dla pojedynczych dzielnic nie ma oficjalnych danych o zarobkach, to średnia dla całego miasta.</p>`}
+function showS(s){clearSel();
+  panel.innerHTML=`<span class="tag stad">⚑ ${s.club}</span><h2>${s.n}</h2><dl class="kv">${s.kv.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl><p>${s.t}</p>`}
+const fanBtns=document.querySelectorAll("#fanFilters button");
+fanBtns.forEach(b=>b.addEventListener("click",()=>{
+  fanBtns.forEach(x=>x.setAttribute("aria-pressed",x===b));
+  const f=b.dataset.f;D.forEach(d=>d.el.classList.toggle("dim",f!=="all"&&d.s!==f));
+}));
+const modeBtns=document.querySelectorAll("[data-m]");
+modeBtns.forEach(b=>b.addEventListener("click",()=>{
+  mode=b.dataset.m;modeBtns.forEach(x=>x.setAttribute("aria-pressed",x===b));
+  const p=mode==="price";
+  document.getElementById("fanFilters").hidden=p;
+  document.getElementById("fanLegend").hidden=p;
+  document.getElementById("priceLegend").hidden=!p;
+  D.forEach(d=>{d.el.setAttribute("fill",p?priceColor(PRICE[d.id]):fill[d.s]);if(p)d.el.classList.remove("dim")});
+  if(p)fanBtns.forEach(x=>x.setAttribute("aria-pressed",x.dataset.f==="all"));
+}));
+// start state: both stadiums story
+panel.innerHTML=`<span class="tag stad">Na start</span><h2>Dwie twierdze, jeden park</h2><p>Stadiony Wisły i Cracovii dzieli niecały kilometr, a między nimi leżą Błonia. Z grubsza północ i wschód miasta (z Nową Hutą) to Wisła, a południe za rzeką to Pasy. Są jednak wyjątki, jak Grzegórzki.</p><p class="hint">Stuknij dzielnicę albo pinezkę ⚑.</p>`;
+</script>
+
+</body></html>
