@@ -12,4 +12,16 @@ Zadanie z grafiki (PJATK). Korekcja kolorów dwóch zdjęć (wilk i plaża): ch�
 - dodane obiekty: kruki (wilk), żaglówka i kontenerowiec (plaża)
 
 ## Efekt
-<!-- TODO: wilk.png, plaza.png (przed/po) -->
+
+### Wilk
+Chłodny las i cienie, ciepłe futro. Dodane obiekty: dwa kruki.
+
+![Wilk: przed i po](wilk-przed-po.jpg)
+
+### Plaża
+Chłodniejsze morze, cieplejszy piasek i skóra. Dodane obiekty: żaglówka i kontenerowiec na horyzoncie.
+
+![Plaża: przed i po](plaza-przed-po.jpg)
+
+Pełne wersje: [wilk.jpg](wilk.jpg), [plaza.jpg](plaza.jpg).
+Zdjęcia źródłowe pochodzą z materiałów do zajęć.
