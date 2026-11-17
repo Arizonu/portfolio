@@ -14,8 +14,10 @@ Interaktywna, schematyczna mapa 18 dzielnic Krakowa. Pokazuje, gdzie przeważaj�
 - sekcja ciekawostek o „Świętej Wojnie” (od 1906 r.)
 - tryb jasny i ciemny, wersja na telefon
 
-## Jak uruchomić
-Otwórz `index.html` w przeglądarce.
+## Zobacz online
+**[arizonu.github.io/portfolio/techniczne/mapa-kibicow-krakowa](https://arizonu.github.io/portfolio/techniczne/mapa-kibicow-krakowa/)**
+
+Możesz też otworzyć `index.html` lokalnie w przeglądarce.
 
 ## Dane
 - Ceny za m²: ceny ofertowe mieszkań z I kwartału 2026 r. (portale nieruchomości)
