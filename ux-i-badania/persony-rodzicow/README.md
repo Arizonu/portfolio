@@ -27,4 +27,4 @@ Każda karta ma: dane demograficzne, opis i cytat, role, statystyki segmentu z r
 | ![Magdalena](magdalena.jpg) | ![Katarzyna](katarzyna.jpg) |
 | ![Paweł](pawel.jpg) | ![Natalia](natalia.jpg) |
 
-Osoby na kartach są fikcyjne. W wersji oddanej na zajęcia były portrety wygenerowane przez AI. Tutaj zastępują je inicjały.
+Osoby na kartach są fikcyjne, a portrety wygenerowała AI.
