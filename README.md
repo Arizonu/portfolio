@@ -13,6 +13,7 @@ Tutaj zbieram projekty ze studiów i własne: technologię ubieralną, UX i bada
 | [Cyfrowe dziedzictwo](prezentacje/cyfrowe-dziedzictwo/) | prezentacja, wystąpienie | projekt slajdów |
 | [Color grading w Photoshopie](graficzne/photoshop-color-grading/) | grafika, obróbka zdjęć | Adobe Photoshop, ExtendScript |
 | [Umysł w pięciu kolorach – film o kognitywistyce](graficzne/film-umysl-w-pieciu-kolorach/) | animacja, motion design, dźwięk | JavaScript (Canvas), Python, ffmpeg |
+| [Asystent AI – persona z trybami i profile użytkownika](techniczne/asystent-ai-persona/) | prompt engineering, teoria umysłu | Python, Google Colab, API OpenAI |
 
 ## Struktura
 
