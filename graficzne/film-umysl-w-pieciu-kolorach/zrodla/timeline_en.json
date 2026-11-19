@@ -1,0 +1,89 @@
+{
+ "ver": "en",
+ "lang": "en",
+ "subs": false,
+ "voice": "en",
+ "dur": 54.03,
+ "lines": [
+  {
+   "n": 1,
+   "t": 1.2,
+   "slot": 3.76,
+   "d": 3.41,
+   "pl": "Kognitywistyka. Umysł w pięciu kolorach.",
+   "en": "Cognitive Science. A mind in five colours."
+  },
+  {
+   "n": 2,
+   "t": 5.66,
+   "slot": 3.7,
+   "d": 3.35,
+   "pl": "To kierunek studiów, który łączy wiedzę o człowieku z technologią.",
+   "en": "A field of study that connects knowledge about people with technology."
+  },
+  {
+   "n": 3,
+   "t": 10.46,
+   "slot": 3.15,
+   "d": 2.8,
+   "pl": "Zaczynamy od pytania: jak działa umysł?",
+   "en": "We start with a question: how does a mind work?"
+  },
+  {
+   "n": 4,
+   "t": 14.41,
+   "slot": 5.98,
+   "d": 5.63,
+   "pl": "Odpowiedzi szukamy w psychologii, neuronauce, lingwistyce, filozofii i informatyce.",
+   "en": "We look for answers in psychology, neuroscience, linguistics, philosophy and computer science."
+  },
+  {
+   "n": 5,
+   "t": 21.99,
+   "slot": 2.61,
+   "d": 2.26,
+   "pl": "Dopiero razem dają pełny obraz.",
+   "en": "Only together do they give the full picture."
+  },
+  {
+   "n": 6,
+   "t": 26.0,
+   "slot": 2.02,
+   "d": 1.67,
+   "pl": "A co robimy w praktyce?",
+   "en": "So what do we actually do?"
+  },
+  {
+   "n": 7,
+   "t": 28.92,
+   "slot": 4.9,
+   "d": 4.55,
+   "pl": "Projektujemy urządzenia, które mierzą reakcje ciała, na przykład stres w lęku społecznym.",
+   "en": "We design devices that measure the body's reactions, such as stress in social anxiety."
+  },
+  {
+   "n": 8,
+   "t": 34.52,
+   "slot": 3.66,
+   "d": 3.31,
+   "pl": "Badamy potrzeby ludzi i tworzymy persony do projektów.",
+   "en": "We study people's needs and create personas for our projects."
+  },
+  {
+   "n": 9,
+   "t": 38.88,
+   "slot": 3.57,
+   "d": 3.22,
+   "pl": "Analizujemy dane i uczymy modele sztucznej inteligencji.",
+   "en": "We analyse data and train artificial intelligence models."
+  },
+  {
+   "n": 10,
+   "t": 43.85,
+   "slot": 6.58,
+   "d": 6.23,
+   "pl": "Kognitywistyka w Polsko-Japońskiej Akademii. Rozumiemy ludzi, żeby tworzyć lepszą technologię.",
+   "en": "Cognitive Science at the Polish-Japanese Academy. We understand people, to build better technology."
+  }
+ ]
+}
