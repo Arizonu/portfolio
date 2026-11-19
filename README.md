@@ -13,6 +13,7 @@ Tutaj zbieram projekty ze studiów i własne: technologię ubieralną, UX i bada
 | [Cyfrowe dziedzictwo](prezentacje/cyfrowe-dziedzictwo/) | prezentacja, wystąpienie | projekt slajdów |
 | [Color grading w Photoshopie](graficzne/photoshop-color-grading/) | grafika, obróbka zdjęć | Adobe Photoshop, ExtendScript |
 | [Umysł w pięciu kolorach – film o kognitywistyce](graficzne/film-umysl-w-pieciu-kolorach/) | animacja, motion design, dźwięk | JavaScript (Canvas), Python, ffmpeg |
+| [Piktogramy „Kafel-znacznik” – znaki z geometrii](graficzne/piktogramy-kafel-znacznik/) | grafika wektorowa, projektowanie znaków | Adobe Illustrator, ExtendScript |
 
 ## Struktura
 
