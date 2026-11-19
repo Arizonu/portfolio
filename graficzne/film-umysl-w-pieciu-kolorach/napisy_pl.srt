@@ -1,0 +1,39 @@
+1
+00:00:01,050 --> 00:00:05,470
+Kognitywistyka. Umysł w pięciu kolorach.
+
+2
+00:00:06,020 --> 00:00:12,170
+To kierunek studiów, który łączy wiedzę o człowieku z technologią.
+
+3
+00:00:13,120 --> 00:00:17,470
+Zaczynamy od pytania: jak działa umysł?
+
+4
+00:00:18,120 --> 00:00:25,400
+Odpowiedzi szukamy w psychologii, neuronauce, lingwistyce, filozofii i informatyce.
+
+5
+00:00:26,850 --> 00:00:30,670
+Dopiero razem dają pełny obraz.
+
+6
+00:00:31,920 --> 00:00:35,200
+A co robimy w praktyce?
+
+7
+00:00:35,950 --> 00:00:43,630
+Projektujemy urządzenia, które mierzą reakcje ciała, na przykład stres w lęku społecznym.
+
+8
+00:00:44,180 --> 00:00:49,530
+Badamy potrzeby ludzi i tworzymy persony do projektów.
+
+9
+00:00:50,080 --> 00:00:55,560
+Analizujemy dane i uczymy modele sztucznej inteligencji.
+
+10
+00:00:56,820 --> 00:01:04,840
+Kognitywistyka w Polsko-Japońskiej Akademii. Rozumiemy ludzi, żeby tworzyć lepszą technologię.

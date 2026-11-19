@@ -12,6 +12,7 @@ Tutaj zbieram projekty ze studiów i własne: technologię ubieralną, UX i bada
 | [Persony rodziców – kontrola rodzicielska](ux-i-badania/persony-rodzicow/) | UX research, persony | analiza raportu, Canva |
 | [Cyfrowe dziedzictwo](prezentacje/cyfrowe-dziedzictwo/) | prezentacja, wystąpienie | projekt slajdów |
 | [Color grading w Photoshopie](graficzne/photoshop-color-grading/) | grafika, obróbka zdjęć | Adobe Photoshop, ExtendScript |
+| [Umysł w pięciu kolorach – film o kognitywistyce](graficzne/film-umysl-w-pieciu-kolorach/) | animacja, motion design, dźwięk | JavaScript (Canvas), Python, ffmpeg |
 
 ## Struktura
 
@@ -19,7 +20,7 @@ Tutaj zbieram projekty ze studiów i własne: technologię ubieralną, UX i bada
 techniczne/     prototypy i kod
 ux-i-badania/   badania użytkowników, persony
 prezentacje/    wystąpienia i slajdy
-graficzne/      projekty graficzne
+graficzne/      projekty graficzne i animacje
 ```
 
 Przy projektach zespołowych podaję skład zespołu i swoją rolę.
