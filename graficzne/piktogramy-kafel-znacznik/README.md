@@ -25,8 +25,6 @@ Każdy znak to **czarny kafel 240 × 240 px z białym symbolem w negatywie**. Tr
 | `podglad_plansza.png` | Podgląd planszy |
 | `Przewodnik_Illustrator.md` | Przewodnik krok po kroku: jak zbudować każdy znak w Illustratorze |
 | `buduj_piktogramy.jsx` | Skrypt ExtendScript, który buduje planszę w Illustratorze |
-| `porzadki.jsx` | Skrypt porządkujący nazwy i blokady warstw |
-| `diag.jsx` | Skrypt diagnostyczny, wypisuje obiekty na warstwach |
 
 ## Uruchomienie skryptów
 
