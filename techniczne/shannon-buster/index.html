@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shannon Buster</title>
+<meta name="description" content="Analizuj osiem stanów Maszyny Shannona i wybieraj następny ruch.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d172b'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='monospace' font-size='22' fill='%2377f2be'%3ES%3C/text%3E%3C/svg%3E">
+<style>
+:root{color-scheme:dark;--bg:#080f20;--panel:#111c31;--line:#283650;--text:#edf2fb;--muted:#a3b1c9;--green:#77f2be;--red:#ff8e9d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.5}main{max-width:1200px;margin:auto;padding:36px 24px 30px}header{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:30px}.brand{display:flex;gap:14px;align-items:center}.logo{background:var(--green);color:var(--bg);font:bold 25px monospace;padding:8px 14px;border-radius:12px}h1{font-size:26px;letter-spacing:-1px;margin:0}h2{font-size:19px;margin:0 0 20px}p{margin:0}.muted,small{color:var(--muted)}small{font-size:14px}.tag{font:14px monospace;border:1px solid var(--line);padding:7px 12px;border-radius:24px;color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}.stat,.card{background:var(--panel);border:1px solid var(--line);border-radius:16px}.stat{padding:18px 22px}.stat strong{display:block;font-size:30px;font-weight:600;margin-top:4px}.layout{display:grid;grid-template-columns:1.6fr 1fr;gap:22px}.card{padding:24px}.decision{background:linear-gradient(120deg,#15253a,#101e2f);border-color:#35504d}.eyebrow{font-size:14px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted)}.current{font-size:28px;font-weight:600;margin:8px 0 24px}.current b{font-family:monospace;color:var(--green);font-size:38px}.predictions{display:grid;grid-template-columns:1fr 1fr;gap:20px}.prediction strong{display:block;font-size:26px;margin-top:4px}.red{color:var(--red)}.green{color:var(--green)}.next{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);margin-top:24px;padding-top:20px;gap:18px}.move{font:600 50px monospace;color:var(--green);line-height:1.1}.help{font-size:14px;color:var(--muted);margin-top:16px}fieldset{padding:0;border:0;margin:0 0 18px}legend{margin-bottom:8px;color:var(--muted);font-size:14px}.choices{display:flex;gap:10px}.choice{flex:1;position:relative}.choice input{position:absolute;opacity:0}.choice span{display:block;text-align:center;padding:10px;border:1px solid var(--line);border-radius:9px;cursor:pointer;font-weight:600}.choice input:checked+span{background:#213f3c;color:var(--green);border-color:var(--green)}.choice input:focus-visible+span{outline:3px solid #8cabff;outline-offset:3px}button{font:inherit;border:1px solid var(--line);background:#19263e;color:var(--text);padding:10px 15px;border-radius:9px;cursor:pointer}button:hover{background:#263955}button:focus-visible{outline:3px solid #8cabff;outline-offset:3px}.primary{width:100%;background:var(--green);color:#09241b;border:0;font-weight:700}.primary:hover{background:#9affd3}.bottom{margin-top:22px;display:grid;grid-template-columns:1.2fr 1fr;gap:22px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.section-head h2{margin:0}.scroll{overflow:auto;max-height:390px}table{width:100%;border-collapse:collapse;text-align:left;font-size:14px}th{color:var(--muted);font-weight:500;position:sticky;top:0;background:var(--panel)}th,td{padding:12px 10px;border-bottom:1px solid var(--line)}td:first-child{font-family:monospace}tr.active{background:#1b3438}tbody tr:last-child td{border-bottom:0}.badge{display:inline-block;padding:2px 8px;border-radius:5px;background:#1d3541;font-weight:600}.empty{text-align:center;padding:40px 18px;color:var(--muted)}.occurrences{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-top:16px}.occ{background:#0b1426;padding:12px 8px;border-radius:8px;text-align:center;font:14px monospace}.occ b{display:block;font-size:20px;margin-top:6px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 16px}.danger{color:var(--red);margin-left:auto}details{color:var(--muted);font-size:14px;margin-top:18px}summary{cursor:pointer}details p{margin:12px 0}footer{display:flex;justify-content:space-between;gap:16px;color:var(--muted);font-size:14px;margin-top:22px}#message{min-height:24px;color:var(--green)}@media(max-width:850px){.layout,.bottom{grid-template-columns:1fr}.occurrences{grid-template-columns:repeat(4,1fr)}}@media(max-width:480px){main{padding:22px 14px}header{align-items:flex-start}.tag{display:none}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:25px}.stat small{font-size:12px}.card{padding:20px}.current{font-size:22px}.current b{font-size:32px}.prediction strong{font-size:22px}.danger{margin-left:0}footer{flex-direction:column}th,td{padding:10px 7px}}
+</style>
+</head>
+<body><main>
+<header><div class="brand"><div class="logo" aria-hidden="true">S/</div><div><h1>Shannon Buster</h1><small>Odkryj schemat. Wybierz kolejny ruch.</small></div></div><span class="tag">8 stanów · 2 ruchy</span></header>
+<section class="stats" aria-label="Statystyki"><div class="stat"><small>Liczba rund</small><strong id="total">0</strong></div><div class="stat"><small>Skuteczność</small><strong id="rate">—</strong></div><div class="stat"><small>Wygrane / przegrane</small><strong id="record">0 / 0</strong></div></section>
+<div class="layout"><section class="card decision" aria-label="Panel decyzji" aria-live="polite"><p class="eyebrow">Silnik decyzji</p><div class="current">Aktualny stan: <b id="state">—</b></div><div class="predictions"><div class="prediction"><small>Maszyna przewidzi</small><strong class="red" id="prediction">Brak danych</strong></div><div class="prediction"><small>Rekomendacja</small><strong class="green" id="recommendation">Brak danych</strong></div></div><div class="next"><div><p>Następny ruch</p><small id="instruction">Dodaj dwie rundy, aby ustalić stan.</small></div><span class="move" id="next">—</span></div><p class="help" id="evidence">Pamięć uczy się na podstawie Twojej historii.</p></section>
+<section class="card"><h2 id="form-title">Dodaj rundę</h2><form id="round-form"><fieldset><legend>Mój ruch</legend><div class="choices"><label class="choice"><input type="radio" name="move" value="0" required checked><span>0</span></label><label class="choice"><input type="radio" name="move" value="1"><span>1</span></label></div></fieldset><fieldset><legend>Wynik rundy</legend><div class="choices"><label class="choice"><input type="radio" name="result" value="W" required checked><span>W · Wygrana</span></label><label class="choice"><input type="radio" name="result" value="L"><span>L · Przegrana</span></label></div></fieldset><button class="primary" type="submit">Dodaj rundę</button></form><p class="help" id="form-help">Wprowadź ruch i wynik zakończonej rundy.</p></section></div>
+<div class="bottom"><section class="card"><div class="section-head"><h2>Pamięć maszyny</h2><small>S / D</small></div><div class="scroll"><table><thead><tr><th scope="col">Stan</th><th scope="col">S</th><th scope="col">D</th><th scope="col">Dominanta</th></tr></thead><tbody id="memory"></tbody></table></div><p class="help">S = powtórzenie ruchu · D = zmiana ruchu</p></section><section class="card"><div class="section-head"><h2>Historia rund</h2><small>Najnowsze na górze</small></div><div class="scroll"><table><thead><tr><th scope="col">Runda</th><th scope="col">Ruch</th><th scope="col">Wynik</th></tr></thead><tbody id="history"></tbody></table></div></section></div>
+<section class="card" style="margin-top:22px"><h2>Wystąpienia stanów</h2><div class="occurrences" id="occurrences"></div><details><summary>Jak obliczane są stan i rekomendacja?</summary><p>Stan to: wynik poprzedniej rundy + S/D między poprzednim a ostatnim ruchem + wynik ostatniej rundy. Przykład: przegrana, ten sam ruch, wygrana → LSW.</p><p>Po nowej rundzie jej S/D dopisywane jest do pamięci stanu, który obowiązywał przed tą rundą. Pierwszy stan powstaje po dwóch rundach; pierwszy licznik pamięci po trzech. Liczba wystąpień stanu może więc różnić się od sumy jego liczników S i D.</p><p>Maszyna przewiduje częstsze zachowanie. Rekomendacja jest przeciwna: przy przewidywaniu D graj S, przy przewidywaniu S graj D. Remis oznacza brak jednoznacznych danych — aplikacja losuje wtedy proponowany ruch 0 lub 1. Skuteczność to udział wygranych W we wszystkich rundach; rekomendacja nie gwarantuje wygranej.</p></details></section>
+<div class="toolbar"><button id="random" type="button">Wylosuj 30 ruchów 0/1</button><button id="csv" type="button">Eksport CSV</button><button id="json" type="button">Eksport JSON</button><button id="sample" type="button">Wczytaj przykładowe dane</button><button id="reset" class="danger" type="button">Reset danych</button></div><p id="message" role="status" aria-live="polite"></p><footer><span>Shannon Buster / analiza sekwencji</span><span>Dane zapisane lokalnie w tej przeglądarce</span></footer>
+</main>
+<script>
+'use strict';
+const STATES=['WSW','WSL','WDW','WDL','LSW','LSL','LDW','LDL'];
+const STORAGE_KEY='shannon-buster-v1';
+let rounds=[];
+let randomSuggestion=null;
+try{const stored=JSON.parse(localStorage.getItem(STORAGE_KEY+'-random'));if(stored&&typeof stored.key==='string'&&[0,1].includes(stored.move))randomSuggestion=stored;}catch(error){}
+function randomMove(data){
+ const key=JSON.stringify(data);
+ if(!randomSuggestion||randomSuggestion.key!==key){
+  randomSuggestion={key,move:Math.random()<0.5?0:1};
+  try{localStorage.setItem(STORAGE_KEY+'-random',JSON.stringify(randomSuggestion));}catch(error){}
+ }
+ return randomSuggestion.move;
+}
+const $=id=>document.getElementById(id);
+function analyze(data){
+ const allData=data;
+ const pendingIndex=data.findIndex(r=>r.result===null);
+ if(pendingIndex!==-1)data=data.slice(0,pendingIndex);
+ const memory=Object.fromEntries(STATES.map(s=>[s,{S:0,D:0}]));
+ const occurrences=Object.fromEntries(STATES.map(s=>[s,0]));
+ const enriched=[];
+ let state=null;
+ data.forEach((round,i)=>{
+  const direction=i?round.move===data[i-1].move?'S':'D':null;
+  const previousState=state;
+  if(previousState)memory[previousState][direction]++;
+  state=i?data[i-1].result+direction+round.result:null;
+  if(state)occurrences[state]++;
+  enriched.push({...round,round:i+1,direction,state,previousState});
+ });
+ const counts=state?memory[state]:{S:0,D:0};
+ const prediction=counts.S===counts.D?null:counts.S>counts.D?'S':'D';
+ const isRandom=prediction===null;
+ const nextMove=isRandom?randomMove(data):(prediction==='D'?data[data.length-1].move:1-data[data.length-1].move);
+ const recommendation=isRandom?(data.length?(nextMove===data[data.length-1].move?'S':'D'):null):(prediction==='S'?'D':'S');
+ allData.slice(data.length).forEach((round,j)=>{const i=data.length+j;enriched.push({...round,round:i+1,direction:i?(round.move===allData[i-1].move?'S':'D'):null,state:null,previousState:null});});
+ return {memory,occurrences,enriched,state,prediction,recommendation,nextMove,isRandom};
+}
+function notify(text){$('message').textContent=text;}
+function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({version:1,rounds}));return true;}catch(error){notify('Nie udało się zapisać danych w przeglądarce. Wyeksportuj je, aby zachować historię.');return false;}}
+function render(){
+ const a=analyze(rounds),wins=rounds.filter(r=>r.result==='W').length;
+ const pending=rounds.findIndex(r=>r.result===null);
+ const completed=pending===-1?rounds.length:pending;
+ const hasPending=pending!==-1;
+ $('random').disabled=rounds.length>0;
+ $('random').title=rounds.length?'Losowanie dostępne na początku, przy pustej historii.':'';
+ $('form-title').textContent=hasPending?'Uzupełnij wynik rundy '+(pending+1):'Dodaj rundę';
+ const form=$('round-form');
+ form.querySelectorAll('input[name=move]').forEach(input=>{input.disabled=hasPending;if(hasPending)input.checked=Number(input.value)===rounds[pending].move;});
+ form.querySelector('button[type=submit]').textContent=hasPending?'Zapisz wynik rundy '+(pending+1):'Dodaj rundę';
+ $('form-help').textContent=hasPending?'Ruch jest już wylosowany. Wybierz W lub L. Pozostało wyników: '+(rounds.length-completed)+'.':'Wprowadź ruch i wynik zakończonej rundy.';
+ $('total').textContent=rounds.length;
+ $('rate').textContent=completed?(100*wins/completed).toLocaleString('pl-PL',{maximumFractionDigits:1})+'%':'—';
+ $('record').textContent=wins+' / '+(completed-wins);
+ $('state').textContent=a.state||'—';
+ $('prediction').textContent=a.prediction||'Brak danych';
+ $('recommendation').textContent=a.isRandom?'Graj '+(a.recommendation||a.nextMove)+' · losowo':'Graj '+a.recommendation;
+ $('next').textContent=a.nextMove===null?'—':a.nextMove;
+ $('instruction').textContent=a.isRandom?'Brak przewagi S/D — proponowany ruch został wylosowany.':a.recommendation==='S'?'Powtórz ostatni ruch.':'Zmień ostatni ruch.';
+ $('evidence').textContent=a.state?'Pamięć '+a.state+': S = '+a.memory[a.state].S+' · D = '+a.memory[a.state].D:'Pamięć uczy się na podstawie Twojej historii.';
+ $('memory').innerHTML=STATES.map(s=>{const c=a.memory[s];return '<tr'+(s===a.state?' class="active"':'')+'><td>'+s+'</td><td>'+c.S+'</td><td>'+c.D+'</td><td>'+(c.S===c.D?'<span class="muted">Brak danych</span>':'<span class="badge">'+(c.S>c.D?'S':'D')+'</span>')+'</td></tr>';}).join('');
+ $('history').innerHTML=a.enriched.slice().reverse().map(r=>'<tr><td>'+r.round+'</td><td>'+r.move+'</td><td class="'+(r.result===null?'muted':r.result==='W'?'green':'red')+'">'+(r.result===null?'Do uzupełnienia':r.result+' · '+(r.result==='W'?'Wygrana':'Przegrana'))+'</td></tr>').join('')||'<tr><td colspan="3" class="empty">Jeszcze bez rund.<br>Dodaj pierwszą rundę lub wczytaj przykład.</td></tr>';
+ $('occurrences').innerHTML=STATES.map(s=>'<div class="occ">'+s+'<b>'+a.occurrences[s]+'</b></div>').join('');
+}
+$('round-form').addEventListener('submit',event=>{event.preventDefault();const form=new FormData(event.currentTarget);const pending=rounds.findIndex(r=>r.result===null);const move=pending===-1?Number(form.get('move')):rounds[pending].move,result=form.get('result');if(![0,1].includes(move)||!['W','L'].includes(result))return;if(pending===-1)rounds.push({move,result});else rounds[pending].result=result;if(save())notify(pending===-1?'Dodano rundę '+rounds.length+'.':'Zapisano wynik rundy '+(pending+1)+'.');render();});
+function download(content,type,extension){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download='shannon-buster-'+new Date().toISOString().slice(0,10)+'.'+extension;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Przygotowano eksport '+extension.toUpperCase()+'.');}
+$('csv').addEventListener('click',()=>{const a=analyze(rounds);download('\uFEFFRunda,Ruch,Wynik,S_D,Stan,Poprzedni_stan\r\n'+a.enriched.map(r=>[r.round,r.move,r.result,r.direction||'',r.state||'',r.previousState||''].join(',')).join('\r\n'),'text/csv;charset=utf-8','csv');});
+$('json').addEventListener('click',()=>download(JSON.stringify({app:'Shannon Buster',version:1,exportedAt:new Date().toISOString(),rounds,...analyze(rounds)},null,2),'application/json;charset=utf-8','json'));
+$('random').addEventListener('click',()=>{if(rounds.length)return;rounds=Array.from({length:30},()=>({move:Math.random()<0.5?0:1,result:null}));if(save())notify('Wylosowano 30 ruchów 0/1. Uzupełniaj kolejno wyniki W/L w formularzu.');render();});
+$('reset').addEventListener('click',()=>{if(rounds.length&&!confirm('Usunąć wszystkie rundy i wyzerować pamięć maszyny?'))return;rounds=[];randomSuggestion=null;if(save())notify('Dane zostały zresetowane.');render();});
+$('sample').addEventListener('click',()=>{if(rounds.length&&!confirm('Zastąpić obecną historię przykładowymi danymi?'))return;rounds=[{move:0,result:'W'},{move:0,result:'L'},{move:1,result:'L'},{move:0,result:'L'},{move:1,result:'L'},{move:0,result:'L'},{move:1,result:'L'},{move:0,result:'L'},{move:1,result:'L'},{move:0,result:'L'},{move:0,result:'L'},{move:1,result:'L'},{move:1,result:'L'},{move:0,result:'L'}];if(save())notify('Wczytano 14 przykładowych rund. Stan LDL: S = 2, D = 7.');render();});
+try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const stored=JSON.parse(raw);if(stored.version!==1||!Array.isArray(stored.rounds)||!stored.rounds.every(r=>r&&[0,1].includes(r.move)&&['W','L',null].includes(r.result)))throw new Error('Invalid data');rounds=stored.rounds.map(r=>({move:r.move,result:r.result}));}}catch(error){notify('Nie można odczytać zapisanych danych. Możesz rozpocząć nową historię.');}
+render();
+</script></body></html>

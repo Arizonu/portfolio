@@ -16,6 +16,7 @@ Tutaj zbieram projekty ze studiów i własne: technologię ubieralną, UX i bada
 | [Piktogramy „Kafel-znacznik” – znaki z geometrii](graficzne/piktogramy-kafel-znacznik/) | grafika wektorowa, projektowanie znaków | Adobe Illustrator, ExtendScript |
 | [Asystent AI – persona z trybami i profile użytkownika](techniczne/asystent-ai-persona/) | prompt engineering, teoria umysłu | Python, Google Colab, API OpenAI |
 | [Zdrowa dziesiątka – teleturniej o zdrowiu dla seniorów](techniczne/zdrowa-dziesiatka/) ([zagraj](https://arizonu.github.io/portfolio/techniczne/zdrowa-dziesiatka/)) | gra edukacyjna, kształtowanie nawyków, dostępność | HTML, CSS, SVG, JavaScript, Web Audio API |
+| [Shannon Buster – jak przechytrzyć Maszynę Shannona](techniczne/shannon-buster/) ([aplikacja](https://arizonu.github.io/portfolio/techniczne/shannon-buster/)) | modelowanie zachowania, analiza sekwencji, prezentacja (zespół: Paweł, Kacper, Kamil) | HTML, CSS, JavaScript |
 
 ## Struktura
 
