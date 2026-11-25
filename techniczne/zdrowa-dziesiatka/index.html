@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zdrowa dziesiątka</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Condensed:wght@600;700;800&display=swap">
+<style>
+/* Układ: studio TV nocą. U góry łuk 10 stanowisk z lampkami szans, pod nim prowadzący i ekran z pytaniem. Jeden, celowo ciemny wygląd. */
+:root{
+  --night:#060b20; --studio:#0c1640; --panel:#132463; --panel-hi:#1d3488; --rim:#3d5cc4;
+  --ink:#f4f6ff; --mut:#b4c0e6; --paper:#f6f8ff; --paper-ink:#0b1540;
+  --gold:#ffc83d; --gold-deep:#e09c12; --lamp:#3be27a; --lamp-off:#1a2650;
+  --ok:#1f9d55; --ok-bg:#dcf7e7; --bad:#d23b28; --bad-bg:#ffe2dd;
+  --disp:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --fs:21px;
+  color-scheme:dark;
+}
+:root.big{--fs:25px}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--night);background-image:radial-gradient(ellipse 120% 60% at 50% 0%,#14245e 0%,var(--night) 70%);background-attachment:fixed;color:var(--ink);font:var(--fs)/1.5 var(--body);min-height:100%}
+#app{max-width:880px;margin:0 auto;padding-block:10px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2{font-family:var(--disp);text-wrap:balance;margin:0}
+h1{font-size:2em;line-height:1.05;letter-spacing:.01em}
+h2{font-size:1.35em;line-height:1.2}
+p{margin:0}
+button{font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:4px solid #fff;outline-offset:3px}
+
+/* nagłówek */
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-block:4px 10px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:700;font-size:22px;letter-spacing:.06em;text-transform:uppercase}
+.mini{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--panel);border:3px solid var(--lamp);box-shadow:0 0 10px rgba(59,226,122,.55);color:var(--gold);font-size:20px;font-weight:800;letter-spacing:0}
+.ctls{display:flex;gap:6px;flex-wrap:wrap}
+.ctl{min-height:48px;padding:6px 14px;border-radius:12px;border:2px solid var(--rim);background:var(--panel);color:var(--ink);font-size:17px;font-weight:700}
+.ctl[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
+
+/* pasek stanu */
+.status{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--rim);font-size:.82em;font-weight:700;font-variant-numeric:tabular-nums}
+.chip.gold{background:var(--gold);color:#1d1400;border-color:var(--gold);font-family:var(--disp);font-size:.95em;letter-spacing:.04em;text-transform:uppercase}
+
+/* studio i stanowiska */
+.stage{position:relative;overflow:hidden;border-radius:22px;padding:22px 8px 12px;border:1px solid #22398a;isolation:isolate;
+  background:radial-gradient(ellipse 70% 45% at 50% 108%,#2c46ad 0%,transparent 70%),radial-gradient(ellipse 60% 50% at 50% -15%,rgba(120,165,255,.35),transparent 70%),linear-gradient(#0a1436,#091131)}
+.stage::before{content:"";position:absolute;inset:0;z-index:-2;background:repeating-conic-gradient(from 160deg at 50% -12%,rgba(140,180,255,.09) 0deg 3deg,transparent 3deg 10deg);-webkit-mask:linear-gradient(#000,transparent 85%);mask:linear-gradient(#000,transparent 85%)}
+.stage::after{content:"";position:absolute;left:4%;right:4%;bottom:6px;height:22px;z-index:-1;border-radius:50%;background:radial-gradient(ellipse at center,rgba(120,160,255,.35),transparent 70%)}
+.pods{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px 6px;padding-top:10px}
+.pod{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;min-width:0;transform:translateY(calc(var(--dm) * -16px)) scale(calc(1 - var(--dm) * .08));transition:opacity .4s,filter .4s}
+@media(min-width:760px){.pods{grid-template-columns:repeat(10,minmax(0,1fr));gap:6px}.pod{transform:translateY(calc(var(--dd) * -30px)) scale(calc(1 - var(--dd) * .12))}.stage{padding-top:40px}}
+.pod-top{width:100%;background:linear-gradient(var(--panel-hi),var(--panel));border:2px solid var(--rim);border-radius:10px 10px 3px 3px;padding:7px 3px 5px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px}
+.pname{max-width:100%;font-family:var(--disp);font-weight:700;font-size:16px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em}
+.pod-front{width:86%;background:linear-gradient(#eef2ff,#aebde8);color:var(--paper-ink);clip-path:polygon(0 0,100% 0,90% 100%,10% 100%);text-align:center;font-family:var(--disp);font-weight:800;font-size:26px;line-height:1.35}
+.ppts{font-size:14px;color:var(--mut);font-variant-numeric:tabular-nums;font-weight:700;margin-top:2px}
+.score{font-family:var(--disp);font-weight:800;font-size:20px;color:var(--gold);line-height:1.1;font-variant-numeric:tabular-nums}
+.you{position:absolute;top:-17px;font-family:var(--disp);font-size:13px;font-weight:800;letter-spacing:.1em;color:var(--gold)}
+.pod.me .pod-top{border-color:var(--gold);background:linear-gradient(#2c4bb5,#172a80)}
+.pod.me .pod-front{background:linear-gradient(#ffe39a,var(--gold))}
+.pod.act::before{content:"";position:absolute;left:50%;bottom:30%;width:190%;height:260%;transform:translateX(-50%);z-index:-1;pointer-events:none;background:linear-gradient(rgba(255,226,140,0),rgba(255,226,140,.38));clip-path:polygon(42% 0,58% 0,100% 100%,0 100%)}
+.pod.act .pod-top{box-shadow:0 0 0 3px var(--gold),0 0 22px rgba(255,200,61,.55)}
+.pod.out{opacity:.32;filter:grayscale(.85)}
+.lamps{display:inline-flex;gap:4px}
+.lamps i{width:14px;height:14px;border-radius:50%;background:var(--lamp-off);box-shadow:inset 0 1px 3px rgba(0,0,0,.7)}
+.lamps i.on{background:radial-gradient(circle at 35% 35%,#e3ffec,var(--lamp) 55%,#139447);box-shadow:0 0 7px var(--lamp),0 0 16px rgba(59,226,122,.45)}
+.lamps i.flick{animation:flick 1.1s ease-out}
+@keyframes flick{0%,22%,44%{background:var(--lamp);box-shadow:0 0 12px var(--lamp)}11%,33%,100%{background:var(--lamp-off);box-shadow:inset 0 1px 3px rgba(0,0,0,.7)}}
+.status .lamps i{width:16px;height:16px}
+
+/* prowadzący */
+.host{display:flex;gap:12px;align-items:flex-start;margin:14px 0}
+.av{flex:none;width:62px;height:62px;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 40% 35%,#3a5bd0,var(--studio));box-shadow:0 0 0 3px var(--night),0 0 0 5px var(--gold)}
+.av svg{width:100%;height:100%;display:block}
+/* animowany prowadzący */
+.tv-in{display:grid;grid-template-columns:118px minmax(0,1fr);gap:14px;align-items:center}
+.tv-in>div{min-width:0}
+.fig{width:118px;height:auto;display:block;margin-bottom:-16px}
+.hostsvg .figbody{animation:bob 3.2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-1.5px)}}
+.hostsvg .eyes{transform-box:fill-box;transform-origin:center;animation:blink 4.5s infinite}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+.hostsvg .cardarm{transform-box:view-box;transform-origin:94px 98px;animation:wave 2.8s ease-in-out infinite}
+@keyframes wave{50%{transform:rotate(-4deg)}}
+.hostsvg .mouth{transform-box:fill-box;transform-origin:center}
+.hostsvg.talk .mouth{animation:talk .16s 12 alternate}
+@keyframes talk{to{transform:scaleY(2.8)}}
+.bub{flex:1;min-width:0;background:var(--paper);color:var(--paper-ink);border-radius:4px 18px 18px 18px;padding:10px 16px}
+.bub small{display:block;font-family:var(--disp);font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:#4a5a92}
+
+/* ekran z pytaniem */
+.tv{background:linear-gradient(160deg,#1a3285,#0d1a50);border:2px solid #4d6fe0;border-radius:18px;padding:16px 18px;box-shadow:0 0 0 5px rgba(77,111,224,.15),inset 0 0 40px rgba(0,0,0,.35)}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.qtext{font-family:var(--body);font-weight:700;font-size:1.2em;line-height:1.35}
+.think{font-size:1.05em;color:var(--mut)}
+.dots b{animation:dot 1.2s infinite;font-weight:700}.dots b:nth-child(2){animation-delay:.2s}.dots b:nth-child(3){animation-delay:.4s}
+@keyframes dot{0%,100%{opacity:.2}50%{opacity:1}}
+.verdict{font-family:var(--disp);font-weight:800;font-size:1.5em;letter-spacing:.02em}
+.verdict.ok,.fb.ok .verdict{color:var(--ok)}.verdict.bad,.fb.bad .verdict{color:var(--bad)}
+.tv .verdict.ok{color:var(--lamp)}.tv .verdict.bad{color:#ff8a78}
+.opts{display:grid;gap:10px;margin-top:12px}
+.opt{display:flex;align-items:center;gap:14px;width:100%;min-height:66px;text-align:left;padding:10px 16px 10px 10px;border-radius:16px;border:3px solid transparent;background:var(--paper);color:var(--paper-ink);font-weight:700;transition:border-color .15s,transform .15s}
+.opt:hover:not(:disabled){border-color:var(--gold);transform:translateX(3px)}
+.opt:disabled{cursor:default}
+.let{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--studio);color:var(--gold);font-family:var(--disp);font-size:24px;font-weight:800}
+.opt.ok{background:var(--ok-bg);border-color:var(--ok)}.opt.ok .let{background:var(--ok);color:#fff}
+.opt.bad{background:var(--bad-bg);border-color:var(--bad)}.opt.bad .let{background:var(--bad);color:#fff}
+.opt.dim{opacity:.5}
+.fb{margin-top:14px;background:var(--paper);color:var(--paper-ink);border-radius:16px;padding:14px 16px;display:grid;gap:8px;border:3px solid transparent}
+.fb.ok{border-color:var(--ok)}.fb.bad{border-color:var(--bad)}
+.tip b{color:#2a3d8f}
+
+/* przyciski, karty, formularz */
+.go{display:block;width:100%;min-height:66px;margin-top:14px;border:none;border-radius:16px;background:var(--gold);color:#1d1400;font-weight:700;font-size:1.05em;box-shadow:0 4px 0 var(--gold-deep)}
+.go:active{transform:translateY(2px);box-shadow:0 2px 0 var(--gold-deep)}
+.go:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.ghost{background:transparent;color:var(--ink);border:2px solid var(--rim);box-shadow:none}
+.card{background:var(--panel);border:1px solid var(--rim);border-radius:18px;padding:18px;margin-top:14px;display:grid;gap:10px}
+.lead{color:var(--mut)}
+.eyebrow{font-family:var(--disp);font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-size:.85em}
+label{font-weight:700;font-size:.9em;color:var(--mut)}
+input[type=text]{font:inherit;width:100%;min-height:60px;border:2px solid var(--rim);border-radius:14px;padding:10px 14px;background:var(--night);color:var(--ink)}
+.toggle{display:flex;align-items:center;gap:14px;width:100%;min-height:72px;padding:12px 16px;border-radius:16px;border:3px solid var(--rim);background:var(--night);color:var(--ink);font-weight:700;text-align:left}
+.box{flex:none;width:36px;height:36px;border-radius:9px;border:3px solid var(--mut);display:grid;place-items:center;font-size:24px;color:#fff}
+.toggle.on{border-color:var(--lamp);background:#0d2a1f}.toggle.on .box{background:var(--lamp);border-color:var(--lamp)}
+.note{font-size:.85em;color:var(--mut)}
+.streak{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--lamp)}
+
+/* ekran startowy */
+.hero{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:14px 0 6px}
+.hero>div:last-child{flex:1;min-width:0;display:grid;gap:8px}
+.hero h1{font-size:2.6em}
+.ring{position:relative;flex:none;width:136px;height:136px;border-radius:50%;background:radial-gradient(circle,var(--panel-hi),var(--studio) 70%);border:2px solid var(--rim)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--disp);font-weight:800;font-size:58px;color:var(--gold);text-shadow:0 0 18px rgba(255,200,61,.5)}
+.ring i{position:absolute;left:50%;top:50%;width:14px;height:14px;margin:-7px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#e3ffec,var(--lamp) 55%,#139447);box-shadow:0 0 8px var(--lamp);transform:rotate(var(--r)) translateY(-55px);animation:ringpulse 3s calc(var(--k) * .3s) infinite}
+@keyframes ringpulse{0%,70%,100%{opacity:1}80%{opacity:.35}}
+
+/* listy */
+.roster{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+@media(min-width:700px){.roster{grid-template-columns:1fr 1fr}}
+.roster li{display:flex;gap:12px;align-items:center;background:var(--studio);border-radius:12px;padding:8px 12px;min-width:0}
+.roster li>div{min-width:0}
+.roster .no{flex:none;width:40px;height:40px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(#eef2ff,#aebde8);color:var(--paper-ink);font-family:var(--disp);font-weight:800;font-size:22px}
+.roster li.me .no{background:var(--gold)}
+.roster small{display:block;color:var(--mut);font-size:.8em;line-height:1.3}
+.rules{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.rules li{display:flex;gap:12px;align-items:flex-start}
+.rules li>span:first-child{flex:none;padding-top:5px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--rim);font-variant-numeric:tabular-nums}
+.row:last-child{border-bottom:none}
+.row.me{color:var(--gold);font-weight:800}
+.big-num{font-family:var(--disp);font-weight:800;font-size:2.6em;line-height:1;color:var(--gold);font-variant-numeric:tabular-nums}
+.stats{display:flex;flex-wrap:wrap;gap:24px}
+.stats>div{display:grid;gap:2px}
+.learned{margin:0;padding-left:1.2em;display:grid;gap:8px}
+@media(max-width:480px){.hero h1{font-size:2.1em}.ring{width:112px;height:112px}.ring b{font-size:46px}.ring i{transform:rotate(var(--r)) translateY(-45px)}.pod-front{font-size:22px}.pname{font-size:14px;letter-spacing:0}.av{width:52px;height:52px}.tv-in{grid-template-columns:86px minmax(0,1fr);gap:10px}.fig{width:86px}}
+/* finał: złote studio */
+body.final{background:#120b02;background-image:radial-gradient(ellipse 120% 60% at 50% 0%,#5a3c08 0%,#120b02 70%)}
+.final .stage{border-color:#a8822c;background:radial-gradient(ellipse 70% 45% at 50% 108%,#c8901e 0%,transparent 70%),radial-gradient(ellipse 60% 50% at 50% -15%,rgba(255,215,120,.45),transparent 70%),linear-gradient(#2a1a04,#1a1003)}
+.final .stage::before{background:repeating-conic-gradient(from 160deg at 50% -12%,rgba(255,210,120,.13) 0deg 3deg,transparent 3deg 10deg)}
+.final .stage::after{background:radial-gradient(ellipse at center,rgba(255,200,90,.45),transparent 70%)}
+.final .pod-top{background:linear-gradient(#5b4310,#2e2106);border-color:#c9a23c}
+.final .pod.me .pod-top{background:linear-gradient(#9a7016,#4a3508);border-color:#fff1c0}
+.final .pod-front{background:linear-gradient(#fff3c4,#e2b64a)}
+.final .pod.me .pod-front{background:linear-gradient(#fff,#ffe08a)}
+.final .tv{background:linear-gradient(160deg,#4a3308,#211603);border-color:#e0b44a;box-shadow:0 0 0 5px rgba(224,180,74,.2),0 0 40px rgba(255,200,61,.15),inset 0 0 40px rgba(0,0,0,.35)}
+.final .chip,.final .ctl{background:#2e2106;border-color:#a8822c}
+.final .chip.gold{background:linear-gradient(#ffe08a,#e0a21b);border-color:#ffe08a}
+.final .card{background:#2a1d05;border-color:#a8822c}
+.final .row{border-color:#6b5218}
+.final .mini{border-color:var(--gold);box-shadow:0 0 12px rgba(255,200,61,.6)}
+.final .let{background:#2e2106}
+.stage-title{text-align:center;font-family:var(--disp);font-weight:800;font-size:22px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);text-shadow:0 0 14px rgba(255,200,61,.7);margin:-8px 0 8px}
+.sparkle{position:absolute;width:4px;height:4px;border-radius:50%;background:#fff3c4;box-shadow:0 0 6px #ffd76a;z-index:-1;animation:twinkle 2.4s infinite}
+@keyframes twinkle{0%,100%{opacity:.1}50%{opacity:1}}
+/* nagroda */
+.prize{text-align:center;border:2px solid var(--gold);border-radius:18px;padding:16px;background:radial-gradient(ellipse at 50% 0%,rgba(255,200,61,.25),transparent 70%);display:grid;gap:4px}
+.prize .amount{font-family:var(--disp);font-weight:800;font-size:3em;line-height:1;color:var(--gold);text-shadow:0 0 18px rgba(255,200,61,.5);font-variant-numeric:tabular-nums}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div id="app">
+  <header class="top">
+    <div class="brand"><span class="mini">10</span>Zdrowa dziesiątka</div>
+    <div class="ctls">
+      <button class="ctl" id="cBig" type="button" aria-pressed="false">A+ Większe litery</button>
+      <button class="ctl" id="cSnd" type="button" aria-pressed="true">Dźwięk: wł.</button>
+      <button class="ctl" id="cMus" type="button" aria-pressed="true">Muzyka: wł.</button>
+      <button class="ctl" id="cFast" type="button">Tempo rywali: zwykłe</button>
+    </div>
+  </header>
+  <main id="screen" aria-live="polite"></main>
+</div>
+
+<script>
+/* ---------- uczestnicy ---------- */
+const PEOPLE=[
+ {n:"Zofia",a:68,c:"Kraków",o:"emerytowana nauczycielka, kocha swój ogród"},
+ {n:"Stanisław",a:72,c:"Poznań",o:"były kolejarz i zapalony wędkarz"},
+ {n:"Halina",a:66,c:"Lublin",o:"pielęgniarka na emeryturze"},
+ {n:"Józef",a:75,c:"Rzeszów",o:"stolarz, codziennie rozwiązuje krzyżówki"},
+ {n:"Krystyna",a:70,c:"Gdańsk",o:"śpiewa w chórze, ma pięcioro wnucząt"},
+ {n:"Tadeusz",a:69,c:"Łódź",o:"inżynier, codziennie jeździ na rowerze"},
+ {n:"Barbara",a:67,c:"Wrocław",o:"księgowa, miłośniczka kryminałów"},
+ {n:"Henryk",a:74,c:"Białystok",o:"rolnik, hoduje pszczoły"},
+ {n:"Wanda",a:71,c:"Katowice",o:"krawcowa, tańczy w klubie seniora"}];
+
+/* ---------- pytania ----------
+   d: 1 = łatwe, 2 = średnie, 3 = trudne. Pierwsza odpowiedź w "o" jest poprawna. */
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+const C=[
+{cat:"Leki",f:"Po co stosuje się: {s}?",r:"Który lek lub grupa leków służy, aby {a}?",e:(s,a)=>`${cap(s)} stosuje się, aby ${a}.`,p:[
+["statyny","obniżyć stężenie cholesterolu LDL",2],
+["inhibitory ACE (np. ramipril)","obniżyć ciśnienie, rozszerzając naczynia krwionośne",3],
+["leki moczopędne (diuretyki)","usunąć z organizmu nadmiar wody i sodu",2],
+["metformina","zmniejszyć stężenie glukozy we krwi w cukrzycy typu 2",2],
+["lewotyroksyna","uzupełnić niedobór hormonu tarczycy",2],
+["leki przeciwzakrzepowe (np. warfaryna)","zmniejszyć ryzyko powstawania zakrzepów",2],
+["inhibitory pompy protonowej (np. omeprazol)","zmniejszyć wydzielanie kwasu żołądkowego",2],
+["bisfosfoniany","zahamować utratę masy kostnej w osteoporozie",3],
+["nitrogliceryna","rozszerzyć naczynia wieńcowe w napadzie bólu dławicowego",3],
+["wziewne leki rozszerzające oskrzela","zmniejszyć duszność w astmie i POChP",2]]},
+{cat:"Badania",f:"Po co wykonuje się badanie: {s}?",r:"Które badanie wykonuje się, aby {a}?",e:(s,a)=>`${cap(s)} wykonuje się, aby ${a}.`,p:[
+["HbA1c (hemoglobina glikowana)","ocenić średni poziom cukru z ostatnich ok. 3 miesięcy",3],
+["TSH","ocenić pracę tarczycy",2],
+["densytometria (DXA)","ocenić gęstość kości",2],
+["EKG","zarejestrować czynność elektryczną serca",1],
+["spirometria","zmierzyć pojemność i przepływ powietrza w płucach",2],
+["kreatynina i eGFR","ocenić wydolność nerek",3],
+["INR","kontrolować skuteczność leczenia warfaryną",3],
+["lipidogram","ocenić stężenie cholesterolu i trójglicerydów",2],
+["kolonoskopia","obejrzeć jelito grube i wykryć polipy lub raka",1],
+["echo serca","ocenić budowę i pracę serca za pomocą ultradźwięków",2]]},
+{cat:"Żywienie",f:"Jaka jest główna rola składnika: {s}?",r:"Który składnik odżywczy {a}?",e:(s,a)=>`${cap(s)}: ${a}.`,p:[
+["witamina D","wspomaga wchłanianie wapnia i mineralizację kości",1],
+["witamina B12","bierze udział w pracy nerwów i tworzeniu krwinek czerwonych",2],
+["witamina K","uczestniczy w wytwarzaniu czynników krzepnięcia krwi",2],
+["żelazo","wchodzi w skład hemoglobiny przenoszącej tlen",1],
+["jod","jest potrzebny do produkcji hormonów tarczycy",1],
+["magnez","uczestniczy w pracy mięśni i nerwów, a jego niedobór może dawać skurcze",2],
+["potas","pomaga regulować rytm serca i gospodarkę wodno-elektrolitową",2],
+["witamina C","uczestniczy w syntezie kolagenu i zwiększa wchłanianie żelaza",1],
+["witamina A","jest potrzebna do widzenia o zmroku i zdrowia nabłonków",2]]},
+{cat:"Choroby",f:"Co jest typowe dla choroby: {s}?",r:"Którą chorobę charakteryzuje: {a}?",e:(s,a)=>`${cap(s)}: ${a}.`,p:[
+["nadciśnienie tętnicze","ciśnienie od 140/90 mmHg w powtarzanych pomiarach",1],
+["cukrzyca typu 2","insulinooporność i podwyższone stężenie glukozy",2],
+["osteoporoza","zmniejszona gęstość kości i większe ryzyko złamań",1],
+["niedoczynność tarczycy","spowolnienie, uczucie zimna, senność i przyrost masy ciała",2],
+["jaskra","uszkodzenie nerwu wzrokowego, często przy podwyższonym ciśnieniu w oku",3],
+["zaćma","zmętnienie soczewki oka",1],
+["migotanie przedsionków","nieregularny rytm serca zwiększający ryzyko udaru",2],
+["POChP","przewlekłe ograniczenie przepływu powietrza w oskrzelach, najczęściej po wieloletnim paleniu",2],
+["choroba Parkinsona","drżenie spoczynkowe, sztywność i spowolnienie ruchów",1],
+["niewydolność serca","zbyt słabe pompowanie krwi: duszność i obrzęki nóg",2],
+["choroba Alzheimera","postępująca utrata pamięci i zdolności myślenia",1]]}];
+
+const Q=[
+/* łatwe */
+{d:1,cat:"Codzienne zdrowie",q:"Jaka temperatura ciała jest prawidłowa u zdrowego dorosłego?",o:["Około 36,6°C","Około 38,5°C","Około 34°C","Około 40°C"],e:"Prawidłowa temperatura ciała to około 36,6°C. Powyżej 38°C mówimy o gorączce."},
+{d:1,cat:"Pierwsza pomoc",q:"Jaki jest jeden numer alarmowy działający w całej Unii Europejskiej?",o:["112","911","123","555"],e:"Numer 112 działa w całej Unii Europejskiej, z telefonu komórkowego i stacjonarnego."},
+{d:1,cat:"Leki",q:"Co zrobić z przeterminowanymi lekami?",o:["Oddać do apteki, do specjalnego pojemnika","Wyrzucić do toalety","Zażyć, żeby się nie zmarnowały","Wyrzucić do pojemnika na plastik"],e:"Przeterminowane leki oddajemy do apteki. Wyrzucone do toalety lub kosza zanieczyszczają wodę i glebę."},
+{d:1,cat:"Codzienne zdrowie",q:"Ile godzin snu zaleca się zwykle osobom starszym?",o:["7–8 godzin","3–4 godziny","11–12 godzin","Wystarczy drzemka w dzień"],e:"Osobom starszym zaleca się zwykle 7–8 godzin snu. Dobry sen wspiera pamięć i odporność."},
+{d:1,cat:"Żywienie",q:"Ile płynów warto wypijać w ciągu dnia, jeśli lekarz nie zalecił inaczej?",o:["Około 1,5–2 litrów","Pół szklanki","Około 5 litrów","Tylko tyle, ile jest w zupie"],e:"Zwykle zaleca się ok. 1,5–2 litrów płynów dziennie. Przy niewydolności serca lub nerek ilość ustala lekarz."},
+{d:1,cat:"Codzienne zdrowie",q:"Jak długo należy myć ręce mydłem, żeby były naprawdę czyste?",o:["Co najmniej 20–30 sekund","2 sekundy","Wystarczy opłukać wodą","Około 5 minut"],e:"Mycie rąk mydłem przez co najmniej 20–30 sekund usuwa większość zarazków."},
+{d:1,cat:"Pierwsza pomoc",q:"Które objawy mogą oznaczać udar mózgu?",o:["Opadnięty kącik ust, osłabienie ręki, kłopoty z mową","Katar i kichanie","Swędzenie skóry","Ból kolana po spacerze"],e:"Opadnięty kącik ust, osłabienie ręki i zaburzenia mowy to typowe objawy udaru. Liczy się czas: dzwonimy pod 112."},
+{d:1,cat:"Profilaktyka",q:"Jak często warto szczepić się przeciw grypie?",o:["Co roku, najlepiej jesienią","Raz w życiu","Co 10 lat","Tylko latem"],e:"Wirus grypy co roku się zmienia, dlatego szczepienie powtarza się co sezon, najlepiej jesienią."},
+{d:1,cat:"Leki",q:"Zapominasz o dawce leku. Co jest bezpieczne?",o:["Sprawdzić ulotkę lub zapytać farmaceutę i nie brać podwójnej dawki","Następnym razem wziąć podwójną dawkę","Przestać brać lek","Wziąć wszystkie zaległe tabletki naraz"],e:"Nie nadrabia się dawki podwójną porcją. Co zrobić, mówi ulotka lub farmaceuta."},
+{d:1,cat:"Leki",q:"W czym pomaga pudełko na leki z przegródkami na dni tygodnia?",o:["Nie zapomnieć dawki i nie wziąć jej dwa razy","Lek działa wtedy silniej","Leki dłużej są ważne","Można brać leki bez recepty"],e:"Kasetka na leki pomaga pamiętać o dawkach i od razu widać, czy dzisiejsza dawka została wzięta."},
+{d:1,cat:"Żywienie",q:"Który produkt jest dobrym źródłem wapnia?",o:["Jogurt naturalny","Ogórek","Herbata","Cukier"],e:"Jogurt, kefir i sery są bogate w wapń, który wzmacnia kości."},
+{d:1,cat:"Żywienie",q:"Które warzywo ma szczególnie dużo witaminy C?",o:["Czerwona papryka","Biały ryż","Makaron","Pszenna bułka"],e:"Czerwona papryka ma więcej witaminy C niż cytryna. Witamina C wspiera odporność."},
+{d:1,cat:"Żywienie",q:"Dlaczego warto ograniczać sól?",o:["Nadmiar soli podnosi ciśnienie krwi","Sól powoduje próchnicę","Sól osłabia wzrok","Sól nie ma wpływu na zdrowie"],e:"Za dużo soli sprzyja nadciśnieniu, a ono zwiększa ryzyko zawału i udaru."},
+{d:1,cat:"Profilaktyka",q:"Przed czym chroni krem z filtrem UV?",o:["Przed oparzeniem słonecznym i rakiem skóry","Przed komarami","Przed przeziębieniem","Przed alergią na pyłki"],e:"Filtr UV chroni skórę przed oparzeniem i zmniejsza ryzyko raka skóry."},
+{d:1,cat:"Ruch",q:"Która aktywność jest bezpieczna i zdrowa dla większości seniorów?",o:["Regularne spacery","Cały dzień w fotelu","Dźwiganie ciężarów bez przygotowania","Sprint pod górę"],e:"Codzienne spacery wzmacniają serce, mięśnie i poprawiają nastrój."},
+{d:1,cat:"Profilaktyka",q:"Jak zmniejszyć ryzyko upadku w domu?",o:["Usunąć śliskie dywaniki i dobrze oświetlić mieszkanie","Chodzić po ciemku","Chodzić w samych skarpetkach po śliskiej podłodze","Stawiać rzeczy na podłodze przy łóżku"],e:"Dobre światło, brak śliskich dywaników i poręcze w łazience chronią przed upadkiem."},
+{d:1,cat:"Profilaktyka",q:"Ryzyko jakich chorób zwiększa palenie papierosów?",o:["Raka płuc, zawału serca i udaru","Tylko kaszlu","Żadnych, jeśli pali się mało","Wyłącznie próchnicy"],e:"Palenie uszkadza płuca i naczynia krwionośne. Rzucenie palenia pomaga w każdym wieku."},
+{d:1,cat:"Codzienne zdrowie",q:"Jak poprawnie zmierzyć ciśnienie w domu?",o:["Na siedząco, po kilku minutach odpoczynku","Zaraz po wejściu po schodach","W trakcie picia kawy","Na stojąco, w pośpiechu"],e:"Ciśnienie mierzymy w spokoju, na siedząco, z ręką opartą na wysokości serca."},
+{d:1,cat:"Codzienne zdrowie",q:"Jakie ciśnienie krwi uznaje się za prawidłowe u dorosłego?",o:["Około 120/80 mmHg","Około 180/110 mmHg","Około 160/100 mmHg","Około 80/40 mmHg"],e:"Prawidłowe ciśnienie to około 120/80 mmHg. Od 140/90 mmHg mówimy o nadciśnieniu."},
+{d:1,cat:"Leki",q:"Na jakie drobnoustroje działają antybiotyki?",o:["Na bakterie","Na wirusy grypy i przeziębienia","Na bakterie i wirusy tak samo","Wyłącznie na pasożyty"],e:"Antybiotyki działają na bakterie, a nie na wirusy. Niepotrzebne stosowanie sprzyja oporności bakterii."},
+{d:1,cat:"Leki",q:"Kiedy najlepiej przyjmować leki na stałe?",o:["O stałych porach, tak jak zalecił lekarz","Tylko wtedy, gdy źle się czuję","Kiedy sobie przypomnę","Co kilka dni"],e:"Stałe pory przyjmowania leków utrzymują ich równe działanie. Pomaga przypomnienie w telefonie."},
+{d:1,cat:"Żywienie",q:"Ile porcji warzyw i owoców zaleca się dziennie?",o:["Co najmniej 5 porcji","1 porcję tygodniowo","Wcale, wystarczą suplementy","Tylko owoce, bez warzyw"],e:"Zaleca się co najmniej 5 porcji warzyw i owoców dziennie, najlepiej więcej warzyw."},
+{d:1,cat:"Leki",q:"Czym najlepiej popić tabletkę, jeśli ulotka nie mówi inaczej?",o:["Szklanką wody","Piwem","Sokiem grejpfrutowym","Mocną kawą"],e:"Wodę wybieramy najczęściej, bo nie wpływa na działanie leków."},
+{d:1,cat:"Leki",q:"Jak alkohol może wpływać na leki?",o:["Może nasilać ich działanie lub skutki uboczne","Zawsze jest bezpieczny","Przyspiesza leczenie","Zastępuje lek"],e:"Alkohol w połączeniu z wieloma lekami, np. nasennymi i przeciwbólowymi, bywa niebezpieczny."},
+{d:1,cat:"Żywienie",q:"Dlaczego seniorzy powinni pić, nawet gdy nie czują pragnienia?",o:["Z wiekiem słabnie uczucie pragnienia","Woda zastępuje jedzenie","Picie wody leczy wszystkie choroby","Pragnienie jest objawem choroby"],e:"Z wiekiem gorzej czujemy pragnienie, dlatego łatwo o odwodnienie. Warto mieć szklankę wody pod ręką."},
+{d:1,cat:"Pamięć",q:"Co pomaga utrzymać dobrą pamięć?",o:["Krzyżówki, czytanie, nauka i spotkania z ludźmi","Ciągłe oglądanie telewizji","Unikanie rozmów","Spanie po 3 godziny"],e:"Mózg lubi wyzwania: łamigłówki, nauka nowych rzeczy i kontakty z ludźmi wspierają pamięć."},
+{d:1,cat:"Profilaktyka",q:"Jak często seniorzy powinni kontrolować wzrok u okulisty?",o:["Regularnie, co 1–2 lata","Tylko gdy przestaną widzieć","Raz w życiu","Nigdy, jeśli mają okulary"],e:"Regularne badanie wzroku pozwala wcześnie wykryć jaskrę i zaćmę."},
+{d:1,cat:"Leki",q:"Ciśnienie wróciło do normy po kilku tygodniach leczenia. Co zrobić z lekami?",o:["Nie odstawiać ich bez konsultacji z lekarzem","Odstawić, bo już są niepotrzebne","Brać co drugi dzień","Podwoić dawkę na zapas"],e:"Dobre ciśnienie często wynika właśnie z leczenia. Zmiany dawek ustala lekarz."},
+{d:1,cat:"Leki",q:"Przyjmujesz leki od kilku lekarzy i suplementy. Co jest najbezpieczniejsze?",o:["Mieć aktualną listę wszystkich leków i pokazywać ją lekarzom","Nie wspominać o suplementach","Informować tylko jednego lekarza","Pytać sąsiadów o zamienniki"],e:"Pełna lista leków i suplementów pomaga uniknąć groźnych interakcji."},
+{d:1,cat:"Pierwsza pomoc",q:"Silny ucisk za mostkiem promieniuje do lewego ramienia i trwa ponad 15 minut. Co robimy najpierw?",o:["Dzwonimy pod 112 i pozostajemy w spoczynku","Idziemy na szybki spacer","Czekamy godzinę, czy ból minie","Kładziemy się spać"],e:"To może być zawał serca. Trzeba natychmiast wezwać pogotowie i unikać wysiłku."},
+/* średnie */
+{d:2,cat:"Badania",q:"Jaka glikemia na czczo mieści się w normie u zdrowej osoby dorosłej?",o:["70–99 mg/dl","130–160 mg/dl","30–50 mg/dl","200–250 mg/dl"],e:"Norma glikemii na czczo to 70–99 mg/dl. Wartości 100–125 mg/dl to stan przedcukrzycowy."},
+{d:2,cat:"Badania",q:"Jaka saturacja krwi (SpO₂) jest zwykle uznawana za prawidłową?",o:["95–100%","85–89%","75–79%","60–69%"],e:"Prawidłowa saturacja to zwykle 95–100%. Wartości poniżej 90% wymagają pilnej konsultacji."},
+{d:2,cat:"Codzienne zdrowie",q:"Jaki zakres BMI uznaje się za prawidłowy u dorosłych?",o:["18,5–24,9","10,0–14,9","30,0–34,9","40,0–44,9"],e:"Prawidłowe BMI to 18,5–24,9. U seniorów wynik warto omówić z lekarzem."},
+{d:2,cat:"Codzienne zdrowie",q:"Jakie tętno spoczynkowe jest typowe dla dorosłego?",o:["60–100 uderzeń na minutę","30–40 uderzeń na minutę","110–130 uderzeń na minutę","150–170 uderzeń na minutę"],e:"Typowe tętno spoczynkowe dorosłego to 60–100 uderzeń na minutę."},
+{d:2,cat:"Żywienie",q:"Ile soli dziennie zaleca się maksymalnie według WHO?",o:["Poniżej 5 g (płaska łyżeczka)","Około 10 g","Około 15 g","Około 25 g"],e:"WHO zaleca poniżej 5 g soli dziennie, czyli mniej niż płaską łyżeczkę."},
+{d:2,cat:"Ruch",q:"Ile umiarkowanej aktywności tygodniowo zaleca WHO osobom 65+, jeśli pozwala na to zdrowie?",o:["Co najmniej 150 minut","Około 30 minut","Około 15 minut","Około 600 minut"],e:"Zaleca się co najmniej 150 minut umiarkowanej aktywności tygodniowo i ćwiczenia równowagi."},
+{d:2,cat:"Pierwsza pomoc",q:"Osoba z cukrzycą leczona insuliną jest blada, spocona i drży, ale jest przytomna. Co podać?",o:["15–20 g cukrów prostych, np. sok lub glukozę","Dodatkową dawkę insuliny","Kawę bez cukru","Nic, tylko położyć ją spać"],e:"To objawy niedocukrzenia. Przytomnej osobie podaje się szybko wchłaniające się cukry."},
+{d:2,cat:"Pierwsza pomoc",q:"Dorosła, przytomna osoba po zadławieniu nie może oddychać ani kaszleć. Co robimy?",o:["Uderzenia między łopatki, potem uciśnięcia nadbrzusza","Dajemy wodę do picia","Kładziemy ją i prosimy o głęboki oddech","Czekamy, aż samo przejdzie"],e:"Stosuje się 5 uderzeń między łopatki, a potem uciśnięcia nadbrzusza (rękoczyn Heimlicha)."},
+/* trudne */
+{d:3,cat:"Leki",q:"Dlaczego przy niektórych lekach, np. części statyn, odradza się sok grejpfrutowy?",o:["Hamuje enzymy rozkładające lek, więc jego stężenie rośnie","Całkowicie neutralizuje substancję czynną","Zwiększa wydalanie leku z moczem","Sprawia, że tabletka się nie rozpuszcza"],e:"Sok grejpfrutowy hamuje enzym CYP3A4, przez co stężenie niektórych leków może niebezpiecznie wzrosnąć."}];
+
+const LEVEL=["","Łatwe","Średnie","Trudne"];
+
+/* ---------- narzędzia ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick3=(p,i)=>shuffle(p.filter((_,j)=>j!==i)).slice(0,3);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const today=(o=0)=>{const d=new Date();d.setDate(d.getDate()+o);return d.toLocaleDateString("sv")};
+
+function bank(){
+  const o=[];
+  C.forEach(c=>c.p.forEach(([s,a,d],i)=>{const x=pick3(c.p,i);
+    o.push({k:s,cat:c.cat,d,q:c.f.replace("{s}",s),o:[cap(a),...x.map(y=>cap(y[1]))],e:c.e(s,a)});
+    o.push({k:s,cat:c.cat,d,q:c.r.replace("{a}",a),o:[cap(s),...x.map(y=>cap(y[0]))],e:c.e(s,a)})}));
+  Q.forEach((q,i)=>o.push({...q,k:"q"+i}));
+  return shuffle(o);
+}
+function draw(lv){
+  let i=S.deck.findIndex(q=>lv.includes(q.d)&&!S.used.has(q.k));
+  if(i<0)i=S.deck.findIndex(q=>!S.used.has(q.k));
+  if(i<0)i=0;
+  const q=S.deck.splice(i,1)[0];S.used.add(q.k);return q;
+}
+/* finał: odrobinę łatwiejszy start, trudne pytanie najwyżej na samym końcu */
+const levels=()=>S.round===1?(S.cyc<=2?[1]:[1,2]):(S.cyc===1?[1,2]:S.cyc<4?[2]:[2,3]);
+
+/* ---------- ustawienia: litery, dźwięk, tempo ---------- */
+let PR=Object.assign({snd:true,mus:true,big:false,tempo:1},store.get("zd10-prefs",{}));
+if("fast" in PR){PR.tempo=PR.fast?2:1;delete PR.fast}
+const TEMPO=["wolne","zwykłe","szybkie"];
+function applyPrefs(){
+  document.documentElement.classList.toggle("big",PR.big);
+  $("#cBig").setAttribute("aria-pressed",PR.big);
+  $("#cSnd").setAttribute("aria-pressed",PR.snd);$("#cSnd").textContent="Dźwięk: "+(PR.snd?"wł.":"wył.");
+  $("#cMus").setAttribute("aria-pressed",PR.mus);$("#cMus").textContent="Muzyka: "+(PR.mus?"wł.":"wył.");
+  $("#cFast").textContent="Tempo rywali: "+TEMPO[PR.tempo];
+  store.set("zd10-prefs",PR);
+}
+$("#cBig").onclick=()=>{PR.big=!PR.big;applyPrefs()};
+$("#cSnd").onclick=()=>{PR.snd=!PR.snd;applyPrefs();if(PR.snd)sfx.ok()};
+$("#cFast").onclick=()=>{PR.tempo=(PR.tempo+1)%3;applyPrefs()};
+$("#cMus").onclick=()=>{PR.mus=!PR.mus;applyPrefs();if(PR.mus)music("round");else stopMusic()};
+
+let AC;
+function tone(f,d,type="sine",t0=0,v=.14){
+  if(!PR.snd)return;
+  try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();
+    const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+t0;
+    o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+d);
+    o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.05)}catch(e){}
+}
+const sfx={
+  ok:()=>{tone(660,.25);tone(880,.45,"sine",.16)},
+  bad:()=>{tone(220,.22,"square",0,.06);tone(165,.45,"square",.2,.06)},
+  go:()=>{tone(523,.2);tone(659,.2,"sine",.16);tone(784,.5,"sine",.32)},
+  q:()=>{tone(988,.12,"sine",0,.08);tone(1319,.25,"sine",.1,.08)}
+};
+
+/* ---------- muzyka studyjna: własne kompozycje w stylu teleturnieju (syntezator, pulsujący bas) ---------- */
+let MASTER,DELAY,NOISE,BUS=null;
+function ac(){
+  AC=AC||new(window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();
+  if(!MASTER){
+    MASTER=AC.createGain();MASTER.gain.value=.55;MASTER.connect(AC.destination);
+    DELAY=AC.createDelay();DELAY.delayTime.value=.27;const fb=AC.createGain(),wet=AC.createGain();fb.gain.value=.3;wet.gain.value=.22;
+    DELAY.connect(fb).connect(DELAY);DELAY.connect(wet).connect(MASTER);
+    NOISE=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate);const d=NOISE.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  }
+  return AC;
+}
+const mf=m=>440*Math.pow(2,(m-69)/12);
+function env(g,t,a,peak,d,rel=.12){g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(peak,t+a);g.gain.setValueAtTime(peak,t+Math.max(a,d-rel));g.gain.linearRampToValueAtTime(0,t+d)}
+function osc(type,f,t,d,dest,det=0){const o=AC.createOscillator();o.type=type;o.frequency.value=f;o.detune.value=det;o.connect(dest);o.start(t);o.stop(t+d+.05);return o}
+function noise(t,d,dest,hp,v){const s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=NOISE;f.type="highpass";f.frequency.value=hp;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);s.connect(f).connect(g).connect(dest);s.start(t);s.stop(t+d+.05)}
+const INST={
+  lead(m,t,d,bus){const g=AC.createGain(),f=AC.createBiquadFilter();f.type="lowpass";f.frequency.value=2600;env(g,t,.02,.075,d);g.connect(f);f.connect(bus);f.connect(DELAY);osc("sawtooth",mf(m),t,d,g,-7);osc("sawtooth",mf(m),t,d,g,7);osc("square",mf(m-12),t,d,g)},
+  brass(m,t,d,bus){const g=AC.createGain(),f=AC.createBiquadFilter();f.type="lowpass";f.frequency.setValueAtTime(500,t);f.frequency.linearRampToValueAtTime(3200,t+.12);f.frequency.linearRampToValueAtTime(1800,t+d);env(g,t,.04,.07,d,.25);g.connect(f);f.connect(bus);f.connect(DELAY);osc("sawtooth",mf(m),t,d,g,-5);osc("sawtooth",mf(m),t,d,g,5)},
+  pad(m,t,d,bus){const g=AC.createGain(),f=AC.createBiquadFilter();f.type="lowpass";f.frequency.value=1300;env(g,t,.35,.03,d,.5);g.connect(f).connect(bus);[-10,0,10].forEach(x=>osc("sawtooth",mf(m),t,d,g,x))},
+  bass(m,t,d,bus){const g=AC.createGain(),f=AC.createBiquadFilter();f.type="lowpass";f.frequency.value=700;env(g,t,.01,.13,d,.05);g.connect(f).connect(bus);osc("triangle",mf(m),t,d,g);osc("square",mf(m),t,d,g,3)},
+  kick(m,t,d,bus){const g=AC.createGain(),o=AC.createOscillator();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(42,t+.14);g.gain.setValueAtTime(.45,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.connect(g).connect(bus);o.start(t);o.stop(t+.32)},
+  snare(m,t,d,bus){noise(t,.14,bus,1800,.12)},
+  hat(m,t,d,bus){noise(t,.04,bus,7000,.05)},
+  crash(m,t,d,bus){noise(t,1.8,bus,4500,.09)},
+  timp(m,t,d,bus){const g=AC.createGain(),o=AC.createOscillator();o.frequency.setValueAtTime(mf(m)*1.05,t);o.frequency.exponentialRampToValueAtTime(mf(m),t+.1);g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.001,t+.9);o.connect(g).connect(bus);o.start(t);o.stop(t+1)},
+  clap(m,t,d,bus){noise(t,.06,bus,1500,.05+Math.random()*.05)}
+};
+const chordEv=(t,notes,d,inst="pad")=>notes.map(n=>[t,inst,n,d]);
+const SONGS={
+  /* czołówka: d-moll, pulsujący bas oktawowy, dramatyczna melodia */
+  intro(){const e=[],ch=[[50,53,57],[46,50,53],[48,52,55],[45,49,52]],bs=[38,34,36,33];
+    ch.forEach((c,b)=>{e.push(...chordEv(b*4,c,4));for(let i=0;i<8;i++)e.push([b*4+i*.5,"bass",bs[b]+(i%2?12:0),.45],[b*4+i*.5,"hat"]);for(let i=0;i<4;i++){e.push([b*4+i,"kick"]);if(i%2)e.push([b*4+i,"snare"])}});
+    [[0,74,1],[1,69,.5],[1.5,74,.5],[2,77,1],[3,76,1],[4,77,.5],[4.5,79,.5],[5,77,1],[6,74,1],[7,70,1],[8,72,1],[9,76,.5],[9.5,79,.5],[10,81,1.5],[11.5,79,.5],[12,76,1],[13,73,1],[14,76,1],[15,69,1]].forEach(([t,m,d])=>e.push([t,"lead",m,d]));
+    e.push([16,"crash"],[16,"kick"],[16,"timp",38],[16,"bass",38,2.5],...chordEv(16,[62,65,69,74],2.5,"brass"));
+    return{bpm:132,e}},
+  /* start rundy / kolejnego etapu */
+  round(){return{bpm:140,e:[[0,"lead",62,.5],[.5,"lead",69,.5],[1,"lead",74,.5],[1.5,"crash"],[1.5,"kick"],[1.5,"timp",38],...chordEv(1.5,[62,65,69,74],2,"brass"),[1.5,"bass",38,2]]}},
+  /* ktoś traci ostatnią szansę */
+  out(){return{bpm:100,e:[[0,"lead",70,.5],[.5,"lead",69,.5],[1,"lead",65,.5],[1.5,"lead",62,1.5],[1.5,"bass",38,2],[1.5,"timp",38],...chordEv(1.5,[50,53,58],2)]}},
+  /* wejście do finału: majestatyczny D-dur, kotły */
+  final(){const e=[],ch=[[50,54,57],[55,59,62],[57,61,64]],bs=[38,43,45];
+    ch.forEach((c,b)=>{e.push(...chordEv(b*4,c,4),[b*4,"timp",bs[b]],[b*4,"kick"]);for(let i=0;i<4;i++)e.push([b*4+i,"bass",bs[b],.9])});
+    [[0,69,1],[1,74,1],[2,78,2],[4,79,1],[5,78,.5],[5.5,76,.5],[6,74,2],[8,76,1],[9,78,1],[10,81,2]].forEach(([t,m,d])=>e.push([t,"brass",m,d]));
+    [11,11.25,11.5,11.75].forEach(t=>e.push([t,"timp",45]));
+    e.push([12,"crash"],[12,"kick"],[12,"timp",38],[12,"bass",38,3],...chordEv(12,[62,66,69,74,78],3,"brass"),...chordEv(12,[50,54,57],3.5));
+    return{bpm:96,e}},
+  /* zwycięstwo: fanfara i oklaski */
+  win(){const e=[[0,"brass",74,.33],[.33,"brass",74,.33],[.66,"brass",74,.33],[1,"brass",78,1],[2,"brass",74,.5],[2.5,"brass",78,.5],[3,"crash"],[3,"kick"],[3,"timp",38],[3,"bass",38,4],...chordEv(3,[69,74,78,81],4,"brass"),...chordEv(3,[50,54,57,62],4.5)];
+    for(let i=0;i<90;i++)e.push([3+Math.random()*8,"clap"]);
+    return{bpm:150,e}},
+  /* pożegnanie: spokojna repryza czołówki */
+  outro(){const e=[...chordEv(0,[50,53,57],4),...chordEv(4,[46,50,53],4),...chordEv(8,[50,53,57,62],5)];
+    [[0,74,1],[1,69,.5],[1.5,74,.5],[2,77,2],[4,77,.5],[4.5,79,.5],[5,77,1],[6,74,2],[8,74,4]].forEach(([t,m,d])=>e.push([t,"lead",m,d]));
+    [0,4,8].forEach(t=>e.push([t,"bass",t===4?34:38,4]));
+    return{bpm:104,e}}
+};
+function stopMusic(){if(BUS&&AC){const b=BUS;b.gain.cancelScheduledValues(AC.currentTime);b.gain.setValueAtTime(b.gain.value,AC.currentTime);b.gain.linearRampToValueAtTime(0,AC.currentTime+.4);setTimeout(()=>b.disconnect(),600)}BUS=null}
+function music(name){
+  if(!PR.mus)return;
+  try{ac();stopMusic();const {bpm,e}=SONGS[name](),sp=60/bpm,t0=AC.currentTime+.08;
+    BUS=AC.createGain();BUS.gain.value=1;BUS.connect(MASTER);
+    e.forEach(([b,inst,m,d])=>INST[inst](m,t0+b*sp,(d||.5)*sp,BUS));
+  }catch(err){}
+}
+
+/* ---------- konfetti ---------- */
+function confetti(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const c=document.createElement("canvas");c.id="confetti";document.body.appendChild(c);
+  const x=c.getContext("2d"),W=c.width=innerWidth,H=c.height=innerHeight,cols=["#ffc83d","#fff3c4","#3be27a","#ffffff","#e09c12"];
+  const P=Array.from({length:130},()=>({x:Math.random()*W,y:-20-Math.random()*H*.6,w:6+Math.random()*6,h:8+Math.random()*8,vy:1.5+Math.random()*2.5,vx:-1+Math.random()*2,r:Math.random()*6,vr:-.15+Math.random()*.3,c:cols[Math.floor(Math.random()*cols.length)]}));
+  const t0=performance.now();
+  (function f(t){const k=(t-t0)/1000;x.clearRect(0,0,W,H);x.globalAlpha=k>4?Math.max(0,1-(k-4)):1;
+    P.forEach(p=>{p.y+=p.vy;p.x+=p.vx+Math.sin(p.y/30)*.6;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.w/2,-p.h/2,p.w,p.h*Math.abs(Math.cos(p.r)));x.restore()});
+    k<5?requestAnimationFrame(f):c.remove()})(t0);
+}
+const zl=n=>n.toLocaleString("pl-PL")+" zł";
+function countUp(el,to){const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/1600);el.textContent=zl(Math.round(to*k*(2-k)/10)*10);if(k<1)requestAnimationFrame(f)})(t0)}
+
+/* ---------- stan gry ---------- */
+let S={tok:0};
+const me=()=>S.P.find(p=>p.me);
+const pts=()=>S.round===2?200:100;
+const T=()=>[[3000,3200],[1700,1900],[700,900]][PR.tempo]||[1700,1900];
+const show=h=>{$("#screen").innerHTML=h;window.scrollTo(0,0)};
+const lamps=(n,f=-1)=>`<span class="lamps" role="img" aria-label="${n} z 3 szans">${[0,1,2].map(i=>`<i class="${i<n?"on":""}${i===f?" flick":""}"></i>`).join("")}</span>`;
+
+function status(){
+  const m=me(),r=(S.round===1?"Runda I":"Finał")+` · pytanie ${S.cyc} z ${S.max}`;
+  return `<div class="status"><span class="chip gold">${r}</span>${S.round===1?`<span class="chip">Szanse ${lamps(m.ch)} ${m.ch}/3</span>`:""}<span class="chip">Punkty: ${m.pts}</span></div>`;
+}
+function pods(){
+  return `<div class="pods">${S.P.map((p,i)=>{
+    const dd=((i-4.5)/4.5)**2,dm=(((i%5)-2)/2)**2,fin=S.round===2;
+    const out=fin?!p.fin:!p.alive;
+    const top=fin&&p.fin?`<div class="score">${p.pts}</div>`:lamps(Math.max(p.ch,0),S.flick===p?p.ch:-1);
+    return `<div class="pod${p.me?" me":""}${out?" out":""}${S.act===p?" act":""}" style="--dd:${dd.toFixed(3)};--dm:${dm.toFixed(3)}">${p.me&&S.name?'<span class="you">TY</span>':""}<div class="pod-top">${top}<div class="pname">${esc(p.n)}</div></div><div class="pod-front">${p.no}</div>${fin?"":`<div class="ppts">${p.pts} pkt</div>`}</div>`;
+  }).join("")}</div>`;
+}
+/* prowadzący: siwe włosy, okulary, ciemny garnitur, czerwony krawat w kropki, karta z pytaniem, przezroczysty pulpit */
+const FF="Barlow Condensed,Arial Narrow,sans-serif";
+function fig(label="",cls="fig",vb="0 0 140 160"){
+  return `<svg class="${cls} hostsvg talk" viewBox="${vb}" aria-hidden="true">
+<g class="figbody">
+<path d="M24 160 C22 104 36 86 62 81 C88 86 102 104 100 160 Z" fill="#262a38"/>
+<path d="M52 81 L62 106 L72 81 Z" fill="#a9c6ea"/>
+<path d="M59.5 85 L64.5 85 L66.5 91 L64 114 L62 118 L60 114 L57.5 91 Z" fill="#d8342c"/>
+<g fill="#fff" opacity=".85"><circle cx="61" cy="90" r=".9"/><circle cx="63.5" cy="96" r=".9"/><circle cx="60.5" cy="102" r=".9"/><circle cx="63" cy="108" r=".9"/><circle cx="62" cy="113" r=".8"/></g>
+<path d="M51 81 L58 104 L54 126 M73 81 L66 104 L70 126" stroke="#171a25" stroke-width="1.6" fill="none"/>
+<path d="M30 98 C26 112 28 126 36 136" stroke="#262a38" stroke-width="12" stroke-linecap="round" fill="none"/>
+<circle cx="39" cy="137" r="6" fill="#f0c4a2"/>
+<rect x="56" y="68" width="12" height="13" rx="3" fill="#e6b592"/>
+<ellipse cx="40" cy="50" rx="4" ry="7" fill="#efc19f"/><ellipse cx="84" cy="50" rx="4" ry="7" fill="#efc19f"/>
+<ellipse cx="62" cy="47" rx="22" ry="26" fill="#f4cba9"/>
+<path d="M40 46 C37 22 51 13 63 14 C78 14 89 23 84 46 C82 34 75 27 62 27 C50 27 43 35 40 46Z" fill="#e3e6eb"/>
+<path d="M50 20 C58 15 70 15 78 21 C70 19 60 19 50 20Z" fill="#c9cdd5"/>
+<path d="M45 37.5 L58 36.5 M66 36.5 L79 37.5" stroke="#aeb3bc" stroke-width="2.4" stroke-linecap="round"/>
+<g class="eyes" fill="#2b2f3a"><circle cx="52" cy="46" r="1.9"/><circle cx="72" cy="46" r="1.9"/></g>
+<g fill="rgba(255,255,255,.22)" stroke="#59606e" stroke-width="1.6"><rect x="45" y="41" width="14" height="10" rx="3"/><rect x="65" y="41" width="14" height="10" rx="3"/></g>
+<path d="M59 44 L65 44" stroke="#59606e" stroke-width="1.6"/>
+<path d="M62 49 Q60 56 63 57" stroke="#d29b78" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<ellipse class="mouth" cx="62" cy="63" rx="5" ry="1.6" fill="#8a3a32"/>
+<g class="cardarm">
+<path d="M94 98 C106 110 106 124 96 118" stroke="#262a38" stroke-width="12" stroke-linecap="round" fill="none"/>
+<g transform="rotate(-8 105 100)"><rect x="86" y="74" width="40" height="50" rx="4" fill="#fffaf0" stroke="#e2c27a" stroke-width="1.5"/>
+<text x="106" y="84" text-anchor="middle" font-size="7" font-weight="700" fill="#4a5a92" font-family="${FF}" letter-spacing=".6">PYTANIE</text>
+<text x="106" y="108" text-anchor="middle" font-size="24" font-weight="800" fill="#0b1540" font-family="${FF}">?</text>
+<text x="106" y="119" text-anchor="middle" font-size="7.5" font-weight="700" fill="#4a5a92" font-family="${FF}">${label}</text></g>
+<circle cx="93" cy="116" r="6" fill="#f0c4a2"/>
+</g>
+</g>
+<path d="M6 134 Q70 122 134 134 L134 141 Q70 129 6 141 Z" fill="rgba(190,220,255,.35)" stroke="rgba(235,247,255,.85)" stroke-width="1"/>
+<rect x="18" y="139" width="5" height="21" fill="rgba(190,220,255,.3)"/><rect x="117" y="139" width="5" height="21" fill="rgba(190,220,255,.3)"/>
+</svg>`;
+}
+const tvFig=(label,inner)=>`<div class="tv"><div class="tv-in">${fig(label)}<div>${inner}</div></div></div>`;
+function talk(){document.querySelectorAll("svg.hostsvg").forEach(s=>{s.classList.remove("talk");void s.getBoundingClientRect();s.classList.add("talk")})}
+const host=(t,av=true)=>`<div class="host">${av?`<div class="av" aria-hidden="true">${fig("","avsvg","32 14 60 60")}</div>`:""}<div class="bub"><small>Prowadzący · Pan Zbigniew</small><div id="ht">${t}</div></div></div>`;
+const SPARK=Array.from({length:14},(_,i)=>`<i class="sparkle" style="left:${(i*37+11)%96+2}%;top:${(i*53+7)%70+4}%;animation-delay:${(i*.37%2.4).toFixed(2)}s"></i>`).join("");
+const stage=()=>`<section class="stage" aria-label="Studio i stanowiska uczestników">${S.round===2?`<div class="stage-title">Wielki finał</div>${SPARK}`:""}${pods()}</section>`;
+const setFinal=on=>document.body.classList.toggle("final",on);
+function view(t,body="",noStatus=false){show(`${noStatus?"":status()}${stage()}${host(t,!body.includes("tv-in"))}<div id="main">${body}</div>`)}
+
+/* ---------- 1. potwierdzenie leków ---------- */
+function meds(){
+  S={tok:S.tok+1};setFinal(false);
+  const played=store.get("zd10-played",null);
+  if(played&&played.date===today())return rested(played);
+  const st=store.get("zd10-meds",{last:"",streak:0});
+  const done=st.last===today();
+  const ring=Array.from({length:10},(_,k)=>`<i style="--r:${k*36}deg;--k:${k}"></i>`).join("");
+  show(`<div class="hero"><div class="ring" aria-hidden="true">${ring}<b>10</b></div>
+    <div><p class="eyebrow">Teleturniej o zdrowiu</p><h1>Zdrowa dziesiątka</h1><p class="lead">Dziesięcioro uczestników, trzy szanse, pytania o zdrowie. Wygrywa wiedza, nie szybkość. Jeden turniej dziennie.</p></div></div>
+  <div class="card">
+    <h2>Zanim wejdziesz do studia</h2>
+    <p>Wejście do teleturnieju otwiera codzienny zdrowy nawyk. Potwierdź, że dziś przyjęto Twoje leki.</p>
+    <button id="t" class="toggle" type="button" aria-pressed="false"><span class="box" aria-hidden="true"></span><span>Przyjąłem/am dziś leki</span></button>
+    <label for="d">Dawka i pora (nieobowiązkowo)</label>
+    <input type="text" id="d" placeholder="np. rano 1 tabletka na ciśnienie" autocomplete="off">
+    <label for="nm">Jak mamy się do Ciebie zwracać? (nieobowiązkowo)</label>
+    <input type="text" id="nm" maxlength="12" placeholder="np. Maria" autocomplete="given-name">
+    <button id="go" class="go" type="button" disabled>Wejdź do studia</button>
+    <p class="note">Jeśli leki nie zostały jeszcze przyjęte, weź je teraz zgodnie z zaleceniem lekarza i wróć do gry.</p>
+    ${st.streak>0?`<p class="streak">${lamps(Math.min(st.streak,3))} ${done?"Dziś leki już potwierdzone. ":""}Seria: ${st.streak} ${st.streak===1?"dzień":"dni"} z rzędu</p>`:""}
+  </div>`);
+  $("#t").onclick=()=>{const t=$("#t"),on=!t.classList.contains("on");t.classList.toggle("on",on);t.setAttribute("aria-pressed",on);t.querySelector(".box").textContent=on?"✓":"";$("#go").disabled=!on;if(on)tone(880,.2)};
+  $("#go").onclick=()=>{
+    if(st.last!==today()){st.streak=st.last===today(-1)?st.streak+1:1;st.last=today();store.set("zd10-meds",st)}
+    store.set("zd10-played",{date:today()});
+    S.streak=st.streak;S.name=$("#nm").value.trim().slice(0,12);
+    setup();music("intro");intro();
+  };
+}
+/* jedna gra dziennie: po rozegraniu ekran startowy zaprasza na jutro */
+function rested(pl){
+  const st=store.get("zd10-meds",{streak:0});
+  show(`${host("Dziękuję za dzisiejszą grę! Zapraszam jutro, najpierw leki, potem nowy turniej.",false)}
+  ${tvFig("jutro",`<p class="eyebrow">Do zobaczenia jutro</p><h2>Dzisiejszy turniej już rozegrany</h2>`)}
+  <div class="card">
+    <p>${pl.pts!=null?`Dzisiejszy wynik: <b>${pl.pts} pkt</b>, poprawne odpowiedzi: <b>${pl.ok} z ${pl.asked}</b>${pl.won?`. Wygrana w finale i wirtualna nagroda ${zl(pl.prize||0)}!`:"."}`:"Dzisiejsza gra została już rozpoczęta."}</p>
+    ${store.get("zd10-vault",0)>0?`<p>Wirtualny skarbiec: <b>${zl(store.get("zd10-vault",0))}</b></p>`:""}
+    <p>W „Zdrową dziesiątkę” gra się raz dziennie, tak jak przyjmuje się codzienną porcję leków. Jutro czeka nowy turniej i nowe pytania.</p>
+    ${st.streak>0?`<p class="streak">${lamps(Math.min(st.streak,3))} Seria z lekami: ${st.streak} ${st.streak===1?"dzień":"dni"} z rzędu</p>`:""}
+  </div>`);
+}
+function setup(){
+  const seat=Math.floor(Math.random()*10);
+  const bots=shuffle(PEOPLE).map(p=>({...p,pts:0,ch:3,alive:true}));
+  bots.splice(seat,0,{n:S.name||"Ty",me:true,pts:0,ch:3,alive:true});
+  bots.forEach((p,i)=>p.no=i+1);
+  Object.assign(S,{P:bots,round:1,cyc:0,max:4,ok:0,asked:0,learned:[],q:[],act:null,flick:null,deck:bank(),used:new Set()});
+}
+
+/* ---------- przedstawienie uczestników ---------- */
+function intro(){
+  const m=me();
+  const roster=S.P.map(p=>p.me
+    ?`<li class="me"><span class="no">${p.no}</span><div><b>${esc(S.name||"Ty")}</b><small>gość przed ekranem, stanowisko ${p.no}</small></div></li>`
+    :`<li><span class="no">${p.no}</span><div><b>${p.n}</b>, ${p.a} lat, ${p.c}<small>${p.o}</small></div></li>`).join("");
+  view(`Dobry wieczór państwu! Witam w teleturnieju „Zdrowa dziesiątka”. Przy stanowisku numer ${m.no} ${S.name?"stoi "+esc(S.name):"stoi nasz gość"}. Proszę poznać rywali.`,
+  `<div class="card"><h2>Zasady</h2><ul class="rules">
+    <li><span>${lamps(3)}</span><span>Każdy ma <b>3 szanse</b>, czyli trzy zielone lampki.</span></li>
+    <li><span>${lamps(2,2)}</span><span>Zła odpowiedź <b>gasi jedną lampkę</b>. Dobra daje <b>100 punktów</b>.</span></li>
+    <li><span>🏁</span><span>Runda I to 4 pytania dla każdego. Kto ją przetrwa, gra w <b>finale</b> z dwójką najlepszych rywali. Ocalałe lampki zamieniają się w punkty.</span></li>
+    <li><span>⏳</span><span>Nie ma limitu czasu. Każde pytanie kończy się krótką wskazówką o zdrowiu.</span></li></ul></div>
+  <div class="card"><h2>Uczestnicy</h2><ul class="roster">${roster}</ul></div>
+  <button class="go" type="button" onclick="cycle()">Zaczynamy I rundę</button>`,true);
+}
+
+/* ---------- 2. pętla rozgrywki ---------- */
+function cycle(){S.cyc++;if(S.cyc===1)music("round");S.q=S.P.filter(p=>S.round===2?p.fin:p.alive);turn()}
+function turn(){
+  let p;while((p=S.q.shift())&&!(S.round===2?p.fin:p.alive));
+  if(!p){if(S.cyc>=S.max)return S.round===2?end(false):toFinal();return cycle()}
+  S.act=p;p.me?ask():bot(p);
+}
+function bot(p){
+  const t=S.tok,[t1,t2]=T();S.flick=null;
+  view(`Pytanie do zawodnika numer ${p.no}. ${p.n}, proszę.`,
+    tvFig(`dla nr ${p.no}`,`<div class="meta"><span class="chip">Odpowiada: nr ${p.no} · ${p.n}</span></div><p class="think">${p.n} zastanawia się<span class="dots"><b>.</b><b>.</b><b>.</b></span></p>`));
+  setTimeout(()=>{if(t!==S.tok)return;
+    const r=Math.random()<(S.round===2?.6:.68);
+    if(r)p.pts+=pts();else if(S.round===1){p.ch--;S.flick=p;if(p.ch<=0){p.alive=false;music("out")}}
+    const msg=r?`${p.n} odpowiada poprawnie! Plus ${pts()} punktów.`
+      :S.round===2?`Niestety, to nie ta odpowiedź.`
+      :p.alive?`Niestety, błąd. Gaśnie lampka, ${p.n} ma jeszcze ${p.ch===1?"jedną szansę":"dwie szanse"}.`
+      :`Niestety, błąd. Gaśnie ostatnia lampka i ${p.n} kończy grę.`;
+    view(msg,tvFig(`dla nr ${p.no}`,`<div class="meta"><span class="chip">Odpowiada: nr ${p.no} · ${p.n}</span></div><p class="verdict ${r?"ok":"bad"}">${r?"✔ Dobra odpowiedź":"✘ Zła odpowiedź"}</p>`));
+    setTimeout(()=>{if(t===S.tok)turn()},t2)},t1);
+}
+function ask(){
+  S.flick=null;const q=draw(levels()),m=me();S.asked++;
+  S.cur={q,opts:shuffle(q.o.map((t,i)=>({t,c:i===0})))};S.locked=false;sfx.q();
+  view(`Pytanie do zawodnika numer ${m.no}${S.name?". "+esc(S.name):""}. Proszę się nie spieszyć, tu liczy się wiedza.`,
+  `${tvFig(`nr ${S.asked}`,`<div class="meta"><span class="chip">Pytanie ${S.asked}</span><span class="chip">${q.cat}</span><span class="chip">${LEVEL[q.d]}</span></div><h2 class="qtext">${q.q}</h2>`)}
+   <div class="opts">${S.cur.opts.map((o,k)=>`<button class="opt" type="button" onclick="pick(${k})"><span class="let">${"ABCD"[k]}</span><span>${o.t}</span></button>`).join("")}</div>
+   <div id="fb"></div>`);
+}
+function pick(k){
+  if(S.locked)return;S.locked=true;
+  const {q,opts}=S.cur,m=me(),right=opts[k].c,good=opts.find(o=>o.c).t;
+  document.querySelectorAll(".opt").forEach((b,i)=>{b.disabled=true;b.classList.add(opts[i].c?"ok":i===k?"bad":"dim")});
+  if(right){m.pts+=pts();S.ok++;sfx.ok()}
+  else{sfx.bad();if(S.round===1){m.ch--;S.flick=m;if(m.ch<=0){m.alive=false;setTimeout(()=>music("out"),500)}}}
+  S.learned.push(q.e);
+  $(".pods").outerHTML=pods();$(".status").outerHTML=status();
+  $("#ht").textContent=right?"Doskonale! To prawidłowa odpowiedź."
+    :S.round===2?"Niestety, to nie ta odpowiedź."
+    :m.ch>0?"Niestety, to błąd. Gaśnie jedna lampka."
+    :"Niestety, to błąd. Gaśnie ostatnia lampka.";
+  talk();
+  $("#fb").innerHTML=`<div class="fb ${right?"ok":"bad"}"><p class="verdict">${right?`✔ Dobrze! +${pts()} pkt`:"✘ Niestety, nie tym razem"}</p>${right?"":`<p>Prawidłowa odpowiedź: <b>${good}</b></p>`}<p class="tip"><b>Warto wiedzieć:</b> ${q.e}</p></div><button class="go" type="button" onclick="nextTurn()">Dalej</button>`;
+  $("#fb").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function nextTurn(){if(S.round===1&&me().ch<=0)return end(true);turn()}
+
+/* ---------- przejście do finału ---------- */
+function toFinal(){
+  S.act=null;S.flick=null;const m=me();
+  const bots=S.P.filter(p=>!p.me).sort((a,b)=>(b.alive-a.alive)||(b.pts-a.pts)||(b.ch-a.ch)).slice(0,2);
+  const F=[m,...bots];
+  F.forEach(p=>{p.fin=true;p.bonus=Math.max(p.ch,0)*150;p.pts+=p.bonus});
+  S.round=2;S.cyc=0;S.max=4;setFinal(true);music("final");
+  view(`Brawo! Przechodzisz do finału. Ocalałe lampki zamieniają się w punkty: 150 za każdą.`,
+  `<div class="card"><p class="eyebrow">Wielki finał</p><h2>Bonus za ocalałe szanse</h2>
+    ${F.map(p=>`<div class="row${p.me?" me":""}"><span>nr ${p.no} · ${esc(p.n)}</span><span>${lamps(Math.max(p.ch,0))} +${p.bonus} pkt</span></div>`).join("")}
+    <p>Zwycięzca finału zdobywa wirtualną nagrodę: każdy punkt to 10 zł.</p>
+    <p>W finale lampki już nie gasną. Każdy finalista dostaje 4 pytania, a każda dobra odpowiedź to <b>200 punktów</b>. Pytania są teraz trochę trudniejsze.</p></div>
+  <button class="go" type="button" onclick="cycle()">Zaczynamy finał</button>`,true);
+}
+
+/* ---------- 3. koniec gry ---------- */
+function end(over){
+  S.tok++;S.act=null;S.flick=null;const m=me();
+  const rows=(over?S.P:S.P.filter(p=>p.fin)).slice().sort((a,b)=>(b.pts-a.pts)||(!!b.me-!!a.me)),win=rows[0];
+  const best=store.get("zd10-best",0),record=m.pts>best;if(record)store.set("zd10-best",m.pts);
+  const won=!over&&!!win.me,prize=won?m.pts*10:0,vault=store.get("zd10-vault",0)+prize;
+  if(won)store.set("zd10-vault",vault);
+  store.set("zd10-played",{date:today(),pts:m.pts,ok:S.ok,asked:S.asked,won,prize});
+  if(over)setFinal(false);
+  const head=over?"Zgasła ostatnia lampka":win.me?"🏆 Wygrywasz Zdrową dziesiątkę!":"Wspaniały finał!";
+  const msg=over?"Tym razem zabrakło szans, ale każda odpowiedź czegoś nauczyła. Jutro kolejna próba!"
+    :win.me?"Gratulacje! Wygrała Twoja wiedza o zdrowiu.":`Wygrywa ${win.n} ze stanowiska ${win.no}. Twój wynik to świetna podstawa do jutrzejszego rewanżu.`;
+  music(won?"win":"outro");
+  show(`${stage()}${host(over?"To był dzielny występ. Dziękujemy i zapraszamy jutro!":won?"Brawo! Mamy zwycięzcę! Gratuluję wiedzy i zapraszam jutro.":"Dziękuję państwu za wspaniałą grę. Do zobaczenia jutro!")}
+  ${won?`<div class="prize"><p class="eyebrow">Nagroda zwycięzcy</p><p class="amount" id="amt">${zl(prize)}</p><p class="note">Wirtualna nagroda w grze: ${m.pts} pkt × 10 zł. To nie są prawdziwe pieniądze.</p><p>Wirtualny skarbiec ze wszystkich wygranych: <b>${zl(vault)}</b></p></div>`:""}
+  <div class="card"><h1>${head}</h1><p>${msg}</p>
+    <div class="stats"><div><span class="note">Wynik końcowy</span><span class="big-num">${m.pts}</span></div>
+    <div><span class="note">Poprawne odpowiedzi</span><span class="big-num">${S.ok}/${S.asked}</span></div>
+    <div><span class="note">Najlepszy wynik</span><span class="big-num">${Math.max(best,m.pts)}</span></div></div>
+    ${record&&best>0?`<p class="streak">Nowy rekord!</p>`:""}</div>
+  <div class="card"><h2>${over?"Ranking po I rundzie":"Ranking finału"}</h2>${rows.map((r,i)=>`<div class="row${r.me?" me":""}"><span>${i+1}. nr ${r.no} · ${esc(r.n)}</span><span>${r.pts} pkt</span></div>`).join("")}</div>
+  <div class="card"><h2>Czego dziś się dowiedzieliśmy</h2><ul class="learned">${S.learned.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+  <div class="card"><p class="streak">${lamps(Math.min(S.streak,3))} Seria z lekami: ${S.streak} ${S.streak===1?"dzień":"dni"}</p><p>Zdrowy nawyk to codzienność. <b>Wróć jutro po kolejnej porcji leków</b> i zagraj w nowym turnieju. Następna gra będzie możliwa jutro.</p></div>
+  <button class="go" type="button" onclick="meds()">Zakończ na dziś</button>`);
+  if(won){confetti();countUp($("#amt"),prize)}
+}
+
+/* dla zespołu testującego: adres z końcówką #reset odblokowuje dzisiejszą grę */
+if(location.hash==="#reset")store.set("zd10-played",null);
+applyPrefs();
+meds();
+</script>
+
+</html>
