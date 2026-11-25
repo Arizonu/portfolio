@@ -1,0 +1,16 @@
+{
+  "name": "neurolab-pro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pracownia neuronauki obliczeniowej (PJATK, Kognitywne przetwarzanie informacji)",
+  "scripts": {
+    "build": "sh build.sh"
+  },
+  "dependencies": {
+    "three": "0.170.0",
+    "uplot": "1.6.31"
+  },
+  "devDependencies": {
+    "esbuild": "0.24.0"
+  }
+}

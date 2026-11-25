@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NeuroLab Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="uplot.css">
+<style>
+/* VOICE work: a research workstation, dense and exact, no decoration
+   IDEA an imaging / electrophysiology rig console: black specimen stage, instrument side panels, scope traces below
+   PICTURE the live 3D specimen fills the stage; data maps use perceptual colormaps with colourbars and scale bars
+   COLOUR graphite ground #0e0f11, panels #16171a, ink #e8e9eb, ice blue #8ab4f8 for controls, orange #ff8a3d for selection
+   TYPE IBM Plex Sans for UI, IBM Plex Mono for numbers and coordinates
+   LAYOUT laptop: top bar, left controls 300px, stage centre with trace dock under it, right inspector 340px; phone: stage, then controls, inspector, traces */
+:root{color-scheme:dark;--bg:#0e0f11;--panel:#16171a;--panel2:#1c1e22;--line:#2a2d33;--ink:#e8e9eb;--mut:#a3a8b0;--dim:#7d838c;--acc:#8ab4f8;--sel:#ff8a3d;--ok:#7ee787;--bad:#ff7b72;--dock:36%}
+*{box-sizing:border-box;min-width:0}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "IBM Plex Sans",system-ui,sans-serif;overflow:hidden}
+button,input,select{font:inherit;color:inherit}
+.num,output,.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+a{color:var(--acc)}
+.app{display:grid;grid-template-rows:auto minmax(0,1fr);height:100%}
+.top{display:flex;align-items:center;gap:18px;padding:0 14px;border-bottom:1px solid var(--line);background:#121316;min-height:52px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;white-space:nowrap;text-decoration:none;color:var(--ink)}
+.brand svg{flex:none}
+.brand small{font-weight:400;color:var(--dim);font-size:12px}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1}
+.tabs a{flex:none;display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:6px;color:var(--mut);text-decoration:none;font-weight:500;white-space:nowrap}
+.tabs a:hover{color:var(--ink);background:#1d1f24}
+.tabs a[aria-current=page]{color:var(--ink);background:#23262c;box-shadow:inset 0 -2px 0 var(--acc)}
+.top .meta{color:var(--dim);font-size:12px;white-space:nowrap}
+.work{display:grid;grid-template-columns:300px minmax(0,1fr) 340px;min-height:0}
+.side{overflow-y:auto;background:var(--panel);border-right:1px solid var(--line);padding:6px 14px 24px}
+.side.right{border-right:0;border-left:1px solid var(--line)}
+.centre{display:grid;grid-template-rows:minmax(0,1fr) var(--dock);min-height:0}
+body.nodock .centre{grid-template-rows:minmax(0,1fr) 0}
+.stage{position:relative;overflow:hidden;background:#07080a;min-height:0;touch-action:none}
+.stage canvas.gl{position:absolute;inset:0;width:100%;height:100%;display:block}
+.labels{position:absolute;inset:0;pointer-events:none}
+.lbl{font:12px "IBM Plex Sans",sans-serif;color:#e8e9eb;background:rgba(14,15,17,.78);border:1px solid #3a3e46;padding:2px 6px;border-radius:4px;white-space:nowrap;transform:translateY(-14px)}
+.lbl.sel{border-color:var(--sel);color:#ffd2b3}
+.hud{position:absolute;left:12px;top:10px;right:12px;display:flex;justify-content:space-between;gap:12px;pointer-events:none}
+.hud .ttl{font-weight:600;font-size:14px;text-shadow:0 1px 2px #000}
+.hud .ttl small{display:block;font-weight:400;color:var(--mut);font-size:12px}
+.readout{position:absolute;right:12px;bottom:12px;max-width:min(360px,70%);background:rgba(16,17,20,.88);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:12px;pointer-events:none;display:none}
+.readout.on{display:block}
+.readout b{color:var(--ink);font-weight:600}
+.readout .mono{color:var(--mut)}
+.scalebar{position:absolute;left:120px;bottom:16px;display:flex;flex-direction:column;gap:3px;pointer-events:none;font:12px "IBM Plex Mono",monospace;color:#d7d9dc}
+.scalebar i{display:block;height:3px;background:#e8e9eb;box-shadow:0 0 0 1px rgba(0,0,0,.6)}
+.vbtns{position:absolute;right:12px;top:44px;display:flex;flex-direction:column;gap:4px}
+.vbtns button{width:40px;height:40px;border-radius:6px;border:1px solid var(--line);background:rgba(22,23,26,.9);cursor:pointer;font-size:13px}
+.vbtns button:hover{border-color:var(--acc)}
+.busy{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(7,8,10,.55);font-size:13px;color:var(--mut)}
+.busy.on{display:flex}
+.dock{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));grid-auto-rows:minmax(210px,1fr);gap:1px;background:var(--line);border-top:1px solid var(--line);overflow:auto;min-height:0}
+.pcard{margin:0;background:var(--panel);display:flex;flex-direction:column;min-height:0;overflow:hidden;padding:6px 8px 4px}
+.pcard figcaption{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:8px;font-size:12px;color:var(--mut);padding:0 2px 4px;line-height:1.35}
+.pcard figcaption strong{color:var(--ink);font-weight:600;white-space:nowrap}
+.pcard .keys{display:flex;flex-wrap:wrap;gap:2px 10px;width:100%}
+.pcard .keys span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.pcard .keys i{width:10px;height:3px;border-radius:1px}
+.pbody{flex:1;min-height:0;position:relative}
+canvas.hm{position:absolute;inset:0;width:100%;height:100%;display:block}
+.sec{padding:12px 0;border-bottom:1px solid var(--line)}
+.sec:last-child{border-bottom:0}
+.sec h3{margin:0 0 8px;font-size:13px;font-weight:600;color:var(--ink)}
+.sec h2{margin:2px 0 4px;font-size:20px;line-height:1.2;font-weight:600}
+.hint,.note{margin:0 0 8px;color:var(--mut);font-size:13px}
+.note{margin-top:6px}
+.small{font-size:12px;color:var(--dim)}
+.ctl{margin:8px 0}
+.ctl label{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--mut);margin-bottom:4px}
+.ctl .val{color:var(--ink);white-space:nowrap}
+.ctl .lab{display:block;font-size:13px;color:var(--mut);margin-bottom:4px}
+.ctl small{color:var(--dim)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:24px;background:transparent;cursor:pointer;--p:50%}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--acc) var(--p),#33363d var(--p))}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:#33363d}
+input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--acc)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#e8e9eb;margin-top:-6px;border:2px solid var(--bg)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#e8e9eb;border:2px solid var(--bg)}
+input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+select{width:100%;min-height:40px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:0 10px;font-size:14px}
+.seg{display:flex;flex-wrap:wrap;gap:2px;background:#101114;border:1px solid var(--line);border-radius:7px;padding:2px}
+.seg button{flex:1 1 auto;min-height:36px;padding:0 10px;border:0;border-radius:5px;background:transparent;color:var(--mut);cursor:pointer;font-size:13px;white-space:nowrap}
+.seg button[aria-pressed=true]{background:#2a2e36;color:var(--ink);box-shadow:inset 0 0 0 1px #3d434d}
+.tog label{display:flex;align-items:center;justify-content:flex-start;gap:10px;color:var(--ink);cursor:pointer;min-height:32px}
+.tog input{appearance:none;width:34px;height:20px;border-radius:10px;background:#33363d;position:relative;cursor:pointer;flex:none;margin:0}
+.tog input::after{content:"";position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#c9ccd1;transition:left .15s}
+.tog input:checked{background:var(--acc)}
+.tog input:checked::after{left:17px;background:#0e0f11}
+.btns{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.btn{min-height:38px;padding:0 12px;border-radius:6px;border:1px solid var(--line);background:var(--panel2);cursor:pointer;font-size:13px}
+.btn:hover{border-color:#4a505a}
+.btn.pri{background:var(--acc);color:#0b1220;border-color:var(--acc);font-weight:600}
+.kv{width:100%;border-collapse:collapse;font-size:13px}
+.kv th{text-align:left;font-weight:400;color:var(--mut);padding:4px 6px 4px 0;vertical-align:top}
+.kv td{padding:4px 0;text-align:right;white-space:nowrap}
+.kv td.unit{color:var(--dim);padding-left:6px;text-align:left;width:1%}
+.kv tr+tr th,.kv tr+tr td{border-top:1px solid #222429}
+.cbar{margin:6px 0 2px}
+.cbar-g{height:12px;border-radius:2px;border:1px solid #33363d}
+.cbar-t{display:flex;justify-content:space-between;font:12px "IBM Plex Mono",monospace;color:var(--mut);margin-top:3px}
+.cbar-l{font-family:"IBM Plex Sans",sans-serif;color:var(--dim)}
+.legend{list-style:none;margin:6px 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 10px;font-size:12px;color:var(--mut)}
+.legend li{display:flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:2px;flex:none}
+.list{list-style:none;margin:0;padding:0;font-size:13px}
+.list li{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-top:1px solid #222429}
+.list li span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bars{display:flex;flex-direction:column;gap:5px;font-size:12px}
+.bars div{display:grid;grid-template-columns:7.5em minmax(0,1fr) 3.4em;align-items:center;gap:6px;color:var(--mut)}
+.bars b{display:block;height:8px;border-radius:1px}
+.bars span:last-child{text-align:right;color:var(--ink)}
+.about{grid-column:1/-1;overflow-y:auto;padding:28px max(4vw,16px)}
+.about .wrap{max-width:1040px}
+.about h1{font-size:32px;line-height:1.08;letter-spacing:-.01em;margin:0 0 10px;text-wrap:balance}
+.about p{max-width:72ch;color:#c9ccd1;font-size:15px}
+.about table{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0 28px}
+.about th,.about td{border-top:1px solid var(--line);padding:9px 8px 9px 0;text-align:left;vertical-align:top}
+.about th{color:var(--mut);font-weight:500}
+.about .scroll{overflow-x:auto}
+.mods{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:18px 0 26px}
+.mods a{display:block;padding:14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);text-decoration:none;color:var(--ink)}
+.mods a:hover{border-color:var(--acc)}
+.mods a strong{display:block;font-size:15px;margin-bottom:4px}
+.mods a span{color:var(--mut);font-size:13px}
+body.page .work{grid-template-columns:1fr}
+body.page .side,body.page .centre{display:none}
+@media (max-width:1180px){.work{grid-template-columns:280px minmax(0,1fr)}.side.right{grid-column:1/-1;border-left:0;border-top:1px solid var(--line);max-height:none}.work{grid-template-rows:minmax(0,1fr) auto}}
+@media (max-width:1180px){body{overflow:auto}.app{height:auto;min-height:100%}.work{grid-template-rows:auto}.centre{height:calc(100svh - 52px);min-height:520px}.side{max-height:calc(100svh - 52px)}}
+@media (max-width:760px){.work{grid-template-columns:1fr}.centre{order:-1;height:auto;grid-template-rows:62svh auto}body.nodock .centre{grid-template-rows:62svh 0}.dock{grid-template-columns:1fr;grid-auto-rows:240px;overflow:visible}.side{max-height:none;border-right:0;border-top:1px solid var(--line)}.top{flex-wrap:wrap;gap:0 12px;padding:6px 12px 0}.top .meta{display:none}.tabs{flex-basis:100%;order:3}.brand small{display:none}.scalebar{left:100px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+<a class="brand" href="#start" aria-label="NeuroLab Pro, strona główna">
+<svg width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="#8ab4f8" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="14" r="4"/><path d="M14 14h11M7 11.2 3 8M7 16.8 3 20M10 10V4M21 14l3-3M21 14l3 3"/></svg>
+<span>NeuroLab Pro <small>pracownia neuronauki</small></span>
+</a>
+<nav class="tabs" aria-label="Moduły" id="tabs"></nav>
+<span class="meta" id="meta"></span>
+</header>
+<main class="work" id="work">
+<aside class="side" id="left" aria-label="Parametry"></aside>
+<div class="centre">
+<div class="stage" id="stage">
+<canvas class="gl" aria-label="Widok 3D preparatu" role="img"></canvas>
+<div class="labels"></div>
+<div class="hud"><div class="ttl" id="ttl"></div></div>
+<div class="vbtns" id="vbtns">
+<button type="button" id="zin" aria-label="Przybliż">+</button>
+<button type="button" id="zout" aria-label="Oddal">−</button>
+<button type="button" id="zhome" aria-label="Widok początkowy" title="Widok początkowy">⌂</button>
+<button type="button" id="zrot" aria-label="Obrót automatyczny" title="Obrót automatyczny" aria-pressed="false">↻</button>
+</div>
+<div class="scalebar"><i></i><span></span></div>
+<div class="readout" id="readout"></div>
+<div class="busy" id="busy">Obliczanie…</div>
+</div>
+<section class="dock" id="dock" aria-label="Wykresy"></section>
+</div>
+<aside class="side right" id="right" aria-label="Inspektor"></aside>
+</main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
