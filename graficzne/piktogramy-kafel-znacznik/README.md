@@ -20,7 +20,7 @@ Każdy znak to **czarny kafel 240 × 240 px z białym symbolem w negatywie**. Tr
 
 | Plik | Opis |
 |---|---|
-| `s38365_Ksiazek_Kacper_Zadanie_02.svg` | Plansza z piktogramami (wektor) |
+| `plansza_piktogramy.svg` | Plansza z piktogramami (wektor) |
 | `plansza_piktogramy.pdf` | Plansza w PDF |
 | `podglad_plansza.png` | Podgląd planszy |
 | `Przewodnik_Illustrator.md` | Przewodnik krok po kroku: jak zbudować każdy znak w Illustratorze |

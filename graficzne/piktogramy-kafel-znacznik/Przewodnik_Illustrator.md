@@ -75,4 +75,4 @@ Wszystkie współrzędne niżej są względne do lewego górnego rogu kafla.
 - File → Save As → `sYYYYY_Nazwisko_Imie_Zadanie_02.ai` (zaznacz Create PDF Compatible File).
 - File → Save a Copy → Adobe PDF → `sYYYYY_Nazwisko_Imie_Zadanie_02.pdf` (preset High Quality Print).
 
-> Plik SVG w tym folderze to wzór: można go otworzyć w Illustratorze, żeby porównać wymiary albo podłożyć jako zablokowaną warstwę referencyjną. Znaki zbuduj jednak sam powyższymi krokami, bo prowadzący ocenia użycie narzędzi.
+> Plik `plansza_piktogramy.svg` w tym folderze to gotowa plansza. Można go otworzyć w Illustratorze, żeby porównać wymiary albo podłożyć jako zablokowaną warstwę referencyjną podczas budowania znaków powyższymi krokami.
